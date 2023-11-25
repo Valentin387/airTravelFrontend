@@ -316,7 +316,7 @@
 </style>
 
 <script>
-import consultService from "@/services/checkInServices/ConsultService.js";
+import consultService from "@/services/checkInServices/consultService.js";
 import confirmService from "@/services/checkInServices/confirmService.js";
 import errorModal from "@/components/errorModal.vue";
 import spinner from "@/components/spinner.vue";
