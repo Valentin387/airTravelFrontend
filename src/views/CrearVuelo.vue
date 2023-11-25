@@ -294,7 +294,7 @@ html {
 
 
 <script>
-import flightService from "@/services/flightService/createFlightService.js";
+import flightService from "@/services/FlightService/createFlightService.js";
 import errorModal from "@/components/errorModal.vue";
 import spinner from "@/components/spinner.vue";
 import Footer from "@/components/footer.vue";
