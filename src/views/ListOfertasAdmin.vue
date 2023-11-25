@@ -426,7 +426,7 @@ html {
 import flightService from "@/services/offerService/listOfferService.js";
 import deleteService from "@/services/offerService/deleteOfferService.js";
 import Footer from "@/components/footer.vue";
-import errorModal from "@/components/ErrorModal.vue";
+import errorModal from "@/components/errorModal.vue";
 
 export default {
     components: {

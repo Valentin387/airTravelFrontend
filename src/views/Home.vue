@@ -842,7 +842,7 @@ section {
 <script>
 import flightService from "@/services/searchService/parametrizedSearchService.js";
 import Footer from "@/components/footer.vue";
-import errorModal from "@/components/ErrorModal.vue";
+import errorModal from "@/components/errorModal.vue";
 import vueloService from '@/services/searchService/searchByPlaceService'; 
 export default {
   components: {
