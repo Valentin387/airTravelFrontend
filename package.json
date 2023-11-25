@@ -6,8 +6,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "node server.js",
-    "heroku-postbuild": "npm --prefix airline-backend install && npm --prefix airline-frontend install && npm --prefix airline-frontend run build"
+    "start": "node server.js"
   },
   "dependencies": {
     "aos": "^3.0.0-beta.6",
