@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'https://air-travel-backend-6f6e61abdc12.herokuapp.com/', // Set your API base URL
+  baseURL: 'https://air-travel-backend-6f6e61abdc12.herokuapp.com/api/', // Set your API base URL
 });
 
 // Add an interceptor to include the JWT token in the authorization header
