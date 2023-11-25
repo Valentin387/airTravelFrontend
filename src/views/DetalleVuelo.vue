@@ -19,7 +19,7 @@
         class="flight-image" />
       <img v-else-if="flight.destination === 'Pereira'" src="../assets/pereira.jpg" alt="Pereira Image"
         class="flight-image" />
-      <img v-else src="../assets/crearAdmin.svg" alt="Default Image" class="flight-image" />
+      <img v-else alt="Default Image" class="flight-image" />
       <div class="flight-details">
         <div class="black-info">
           <h2>{{ flight.name }}</h2>
