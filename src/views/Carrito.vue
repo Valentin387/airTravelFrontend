@@ -11,21 +11,22 @@
               <th class="left-align">Origen</th>
               <th class="left-align">Destino</th>
               <th class="left-align">Fecha de despegue</th>
-              <th class="left-align">Estado</th>
               <th class="left-align">Cantidad de asientos</th>
               <th class="left-align">Costo por pasajero</th>
+              <th class="left-align">Costo con Oferta</th>
               <th class="left-align"></th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(item, index) in cartItems" :key="index">
-              <td class="flight">{{ item.flightId }}</td>
-              <td class="left-align">{{ item.origin }}</td>
-              <td class="left-align">{{ item.destination }}</td>
-              <td class="left-align">{{ formatDate(item.flightDate) }}</td>
-              <td class="left-align">{{ item.state }}</td>
-              <td class="left-align">{{ item.seats.length }}</td>
-              <td class="left-align">${{ item.costByPerson }}</td>
+              <td class="left">{{ item.flightId }}</td>
+              <td class="left">{{ item.origin }}</td>
+              <td class="left">{{ item.destination }}</td>
+              <td class="left">{{ formatDate(item.flightDate) }}</td>
+              <td class="left">{{ item.seats.length }}</td>
+              <td class="left">${{ item.costByPerson }}</td>
+              <td class="left">${{ item.costByPersonOffer }}</td>
+              
               <td>
                 <button class="button-delete" @click="removeItem(index)">X</button>
               </td>
@@ -34,7 +35,7 @@
         </table>
       </div>
       <div class="cart-total">
-        <p>Total: ${{ total }}</p>
+        <p><strong>Total:  </strong> $ {{ Math.round(total * 100) / 100 }}</p>
         <button class="button-buy" @click="purchase">Comprar Ahora</button>
       </div>
     </div>
@@ -131,9 +132,9 @@ html {
     }
 
     .button-delete {
-    background-color: rgb(163, 160, 160);
+    background-color: rgb(212, 8, 8);
     color: white;
-    border-radius: 10px;
+    border-radius: 15px;
     width: 20px;
     text-align: center;
     cursor: pointer;
@@ -143,6 +144,10 @@ html {
     display: inline;
     text-align: right;
     padding: 10px;
+    p{
+      font-size: 2rem;
+    }
+ 
     }
 
     .button-buy {

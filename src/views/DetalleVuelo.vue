@@ -20,12 +20,15 @@
       <img v-else-if="flight.destination === 'Pereira'" src="../assets/pereira.jpg" alt="Pereira Image"
         class="flight-image" />
       <img v-else alt="Default Image" class="flight-image" />
+      
+      
       <div class="flight-details">
         <div class="black-info">
-          <h2>{{ flight.name }}</h2>
-          <p> <strong>{{ flight.origin }} - {{ flight.destination }} </strong></p>
+          <h2><strong>{{ flight.origin }} - {{ flight.destination }} </strong></h2>
+          <br>
           <p class="price" :class="{ 'strike-through': flight.costByPersonOffer > 0 }"><strong>$ </strong>{{ flight.costByPerson }}</p>
           <p class="price" v-if="flight.costByPersonOffer > 0"><span style="color:#0d629b;"><strong>Oferta:</strong></span> ${{ flight.costByPersonOffer }}</p>
+          <br>
         </div>
         <p> <strong>Fecha: </strong> {{ formatDate(flight.flightDate) }}</p>
         <p><strong> Tiempo de vuelo: </strong>  {{ formatDuration(flight.flightDuration) }}
@@ -34,12 +37,19 @@
         </span>
         <span v-else>minutos</span></p> 
        
-       
         <p> <strong> Fecha de llegada: </strong> {{ formatDate(flight.arrivalDate) }}</p>
         <p><strong> Costo del vuelo por persona: </strong> ${{ flight.costByPerson }}</p>
         <div class="seats-input">
           <label for="seats"> <strong> Asientos: </strong></label>
-          <input type="number" id="seats" v-model="selectedSeats" min="1" max="5" @change="updateTotalPrice" />
+     
+          <select class="seats" v-model="selectedSeats" @change="updateTotalPrice" >
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+
         </div>
         <div class="class-input">
           <label for="class"><strong> Clase:</strong></label>
@@ -48,19 +58,22 @@
             <option value="Economic Class">Clase Económica</option>
           </select>
         </div>
+        <br>
+        <p class="total"><strong> Total : $ </strong>{{ flight.price }}</p>
         <div class="action-buttons">
           <button class="right-button" @click="addToCart">Añadir al carrito</button>
         </div>
+        
       </div>
-
-
-
     </div>
+    
   </div>
+  
   <div v-else>
     <p class="loading">Cargando detalles del vuelo...</p>
   </div>
   <Footer></Footer>
+ 
 </template>
 
 
@@ -116,18 +129,6 @@ html {
   text-decoration-color: red; 
 }
 .flight-detail {
-  /*margin: 0 auto;
-    padding: 20px;
-    border-radius: 5px;
-    height: 85vh;
-    width: 90vw;
-    margin: 0 auto; /* Centrar horizontalmente 
-    margin-top: 10rem; /* Centrar verticalmente 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;*/
-  justify-content: center;
   background-color: $secondary;
   width: 90vw;
   margin: 0 auto;
@@ -136,7 +137,7 @@ html {
   /* Centrar verticalmente */
   border-radius: 10px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   overflow: hidden;
 }
 
@@ -162,7 +163,11 @@ html {
 
 .black-info {
   font-weight: bold;
-  font-size: 3rem;
+  font-size: 2rem;
+  h2{
+    font-size: 3rem;
+   
+  }
 }
 
 .flight-info-item {
@@ -239,7 +244,7 @@ button {
 
       select,
       input {
-        width: 40%;
+        width: 30%;
         margin-top: 10rem;
         margin: 1px 0;
         padding: 1rem;
@@ -252,8 +257,7 @@ button {
 
   }
 
-  .seats-input,
-  .class-input {
+  .seats-input, .class-input {
     margin-top: 10px;
 
   }
@@ -344,8 +348,11 @@ export default {
         });
     },
     updateTotalPrice() {
+      // Si costByPersonOffer es mayor a 0, usa costByPersonOffer. De lo contrario, usa costByPerson.
+      const costPerPerson = this.flight.costByPersonOffer > 0 ? this.flight.costByPersonOffer : this.flight.costByPerson;
+
       // Actualiza el precio total multiplicando el costo por persona por la cantidad de asientos seleccionados
-      this.flight.price = this.selectedSeats * this.flight.costByPerson;
+      this.flight.price = this.selectedSeats * costPerPerson;
     },
     formatDate(dateString) {
       //Cambia el formato de la fecha de milisegundos a años, meses y dias
@@ -386,8 +393,10 @@ export default {
     if (storedFlightDetails) {
       // Convierte los detalles del vuelo de nuevo a un objeto JavaScript
       this.flight = JSON.parse(storedFlightDetails);
-      // Inicializa el precio total con el costo por persona por defecto (por ejemplo, para 1 asiento)
-      this.flight.price = this.flight.costByPerson;
+
+      // Si costByPersonOffer es mayor a 0, usa costByPersonOffer. De lo contrario, usa costByPerson.
+      this.flight.price = this.flight.costByPersonOffer > 0 ? this.flight.costByPersonOffer : this.flight.costByPerson;
+
       this.loading = false; // Marca como cargado
     }
   },
