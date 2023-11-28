@@ -11,10 +11,10 @@
                 <nav class="navbar">
                     <!-- LINKS DE NAVEGACIÓN -->
                     <a data-aos="zoom-in-left" data-aos-delay="300" @click="redirectToPaginaPrincipal" >Inicio</a>
-                    <a data-aos="zoom-in-left" data-aos-delay="450" @click="redirectToCheckIn"  v-if="userRole !== 1">Confirmar Check-in</a>
+                    <a data-aos="zoom-in-left" data-aos-delay="450" @click="redirectToCheckIn"  v-if="userRole !== 1 && userRole !== 2">Confirmar Check-in</a>
                     <a data-aos="zoom-in-left" data-aos-delay="600" @click="redirectToAyuda">ayuda</a>
                 </nav>
-                <a data-aos="zoom-in-left" data-aos-delay="600" @click="redirectToCarrito" class="carrito" id="carrito" v-if="userRole !== 1">
+                <a data-aos="zoom-in-left" data-aos-delay="600" @click="redirectToCarrito" class="carrito" id="carrito" v-if="userRole === 3 ">
                     <i class="material-symbols-outlined">shopping_cart</i>
                 </a>
 
@@ -48,8 +48,8 @@
                         <li><a href="/Perfil">Perfil</a></li>
                         <li><a href="/M_Financiero">Módulo Financiero</a></li>
                         <li><a href="/Checkin">Check-in</a></li>
-                        <li><a href="/List_Reservas">Mis Reservas</a></li>
-                        <li v-if="profile.subscribedToFeed === 1"><a href="/">Noticias</a></li>
+                        <li><a href="/List_Reservas">Reservas</a></li>
+                        <li v-if=" SuscritoNoticias === 1"><a href="/PromocionesUsuario">Noticias</a></li>
                         <li> <div class="btn-cerrar" @click="logout">
                                 <span class="material-symbols-outlined">logout</span>Cerrar sesión
                             </div></li>
@@ -331,6 +331,7 @@ export default {
             token: window.sessionStorage.getItem("JWTtoken"),
             isMenuUsuarioActive: false,
             userRole: null, // Almacena el rol del usuario
+            SuscritoNoticias:null,
             profile: {
                 id: "",
                 email: "",
@@ -361,6 +362,7 @@ export default {
             const token = window.sessionStorage.getItem("JWTtoken");
             if (token && token != null) {
                 this.isMenuUsuarioActive = !this.isMenuUsuarioActive;
+                this.getUserRole(); // Llama a la función para obtener el rol del usuario
             } else {
                
                 this.redirectToLogin();
@@ -369,6 +371,7 @@ export default {
         redirectToLogin() {
             this.$router.push("/Login"); // Redirige a la página de inicio de sesión
             this.userRole=null;
+    
         },
         getUserRole() {
             const token = window.sessionStorage.getItem("JWTtoken");
@@ -384,7 +387,9 @@ export default {
                 if (tokenData.role == "registeredUser") {
                     this.userRole = 3;
                 }
+              
             }
+            
 
         },
 
@@ -407,11 +412,16 @@ export default {
 
         logout(){
             this.isMenuUsuarioActive = false; // Cierra el menú desplegable del usuario
+            // Limpiar sessionStorage
+            window.sessionStorage.clear();
             logoutService.logout().then((response) => {
+
           // Maneja la respuesta exitosa aquí
          
           if (response.status === 200) {
             console.log("logout exitoso", response.data);
+            // Redirigir al usuario a la página de inicio de sesión
+             this.$router.push('/');
        
             // Redirige al usuario o realiza otras acciones según tus necesidades
           }

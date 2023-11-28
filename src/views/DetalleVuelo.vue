@@ -24,7 +24,8 @@
         <div class="black-info">
           <h2>{{ flight.name }}</h2>
           <p> <strong>{{ flight.origin }} - {{ flight.destination }} </strong></p>
-          <p><strong>$ </strong>{{ flight.price }}</p>
+          <p class="price" :class="{ 'strike-through': flight.costByPersonOffer > 0 }"><strong>$ </strong>{{ flight.costByPerson }}</p>
+          <p class="price" v-if="flight.costByPersonOffer > 0"><span style="color:#0d629b;"><strong>Oferta:</strong></span> ${{ flight.costByPersonOffer }}</p>
         </div>
         <p> <strong>Fecha: </strong> {{ formatDate(flight.flightDate) }}</p>
         <p><strong> Tiempo de vuelo: </strong>  {{ formatDuration(flight.flightDuration) }}
@@ -110,6 +111,10 @@ html {
   }
 }
 
+.strike-through {
+  text-decoration: line-through;
+  text-decoration-color: red; 
+}
 .flight-detail {
   /*margin: 0 auto;
     padding: 20px;

@@ -46,7 +46,8 @@
                  </p>
                  </div>
                  <div class="flight-price">
-                 <p class="price">${{ flight.costByPerson }}</p>
+                  <p class="price" :class="{ 'strike-through': flight.costByPersonOffer > 0 }">${{ flight.costByPerson }}</p>
+                  <p class="price" v-if="flight.costByPersonOffer > 0"><span style="color:#0d629b;"><strong>Oferta:</strong></span> ${{ flight.costByPersonOffer }}</p>
                  <button @click="verOferta(flight)">Ver Oferta</button>
                  </div>
              </div>
@@ -105,7 +106,10 @@ html {
    background-color: $azul;
  }
 }
-
+.strike-through {
+  text-decoration: line-through;
+  text-decoration-color: red; 
+}
 
 .contenedores {
  background-color: $card; /* Cambia este color según tus necesidades */

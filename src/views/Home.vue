@@ -21,7 +21,7 @@
           name="origin"
           placeholder="¿Desde dónde vuelas?"
           v-model="searchParams.origin"
-          required
+          
         >
           <option value="" disabled selected>¿Desde dónde vuelas?</option>
           <option value="Madrid">Madrid</option>
@@ -44,7 +44,7 @@
           name="destination"
           placeholder="¿A dónde vuelas?"
           v-model="searchParams.destination"
-          required
+         
         >
           <option value="" disabled selected>¿A dónde vuelas?</option>
           <option value="Madrid">Madrid</option>
@@ -66,7 +66,7 @@
           type="date"
           name="departureDate"
           v-model="searchParams.flightDate"
-          required
+  
         />
       </div>
 
@@ -83,7 +83,7 @@
           name="numPassengers"
           placeholder="Número de pasajeros"
           v-model="searchParams.numPassengers"
-          required
+      
         />
       </div>
       <input
@@ -880,7 +880,7 @@ export default {
     },
 
     performFlightSearch() {
-      if (
+      /**if (
         this.searchParams.numPassengers <= 0 ||
         isNaN(this.searchParams.numPassengers)
       ) {
@@ -895,9 +895,44 @@ export default {
         this.numberErrorMessage =
           "Las búsquedas tienen un máximo de 16 pasajeros.";
         return;
+      }**/
+      const { origin, destination, flightDate, numPassengers } = this.searchParams;
+
+      // Verifica si se ha proporcionado al menos un criterio de búsqueda
+      const hasOrigin = origin !== '';
+      const hasDestination = destination !== '';
+     // const hasFlightDate = flightDate !== '';
+      const hasNumPassengers = numPassengers !== '';
+      //|| hasFlightDate
+      const hasAnyCriteria = hasOrigin || hasDestination  || hasNumPassengers;
+
+      if (!hasAnyCriteria) {
+        // No se proporcionó ningún criterio, se muestran todos los vuelos
+        return flightService.getAllFlights().then((response) => {
+          // ...
+        });
       }
+
+        // Filtra los vuelos según los criterios proporcionados
+        const filteredSearchParams = {};
+
+        if (hasOrigin) {
+          filteredSearchParams.origin = origin;
+        }
+
+        if (hasDestination) {
+          filteredSearchParams.destination = destination;
+        }
+
+       /* if (hasFlightDate) {
+          filteredSearchParams.flightDate = flightDate;
+        }*/
+
+        if (hasNumPassengers) {
+          filteredSearchParams.numPassengers = numPassengers;
+        }
   
-      flightService. parametrizedSearch(this.searchParams).then((response) => {console.log(response.status);
+      return flightService.parametrizedSearch(filteredSearchParams).then((response) => {
           if (response.status === 200) {
             console.log("Vuelos encontrados:", response.data);
 
