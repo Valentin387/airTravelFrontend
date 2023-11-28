@@ -11,10 +11,10 @@
                 <nav class="navbar">
                     <!-- LINKS DE NAVEGACIÓN -->
                     <a data-aos="zoom-in-left" data-aos-delay="300" @click="redirectToPaginaPrincipal" >Inicio</a>
-                    <a data-aos="zoom-in-left" data-aos-delay="450" @click="redirectToCheckIn">Confirmar Check-in</a>
+                    <a data-aos="zoom-in-left" data-aos-delay="450" @click="redirectToCheckIn"  v-if="userRole !== 1">Confirmar Check-in</a>
                     <a data-aos="zoom-in-left" data-aos-delay="600" @click="redirectToAyuda">ayuda</a>
                 </nav>
-                <a data-aos="zoom-in-left" data-aos-delay="600" @click="redirectToCarrito" class="carrito" id="carrito">
+                <a data-aos="zoom-in-left" data-aos-delay="600" @click="redirectToCarrito" class="carrito" id="carrito" v-if="userRole !== 1">
                     <i class="material-symbols-outlined">shopping_cart</i>
                 </a>
 
@@ -47,7 +47,7 @@
                         <!-- Cliente -->
                         <li><a href="/Perfil">Perfil</a></li>
                         <li><a href="/M_Financiero">Módulo Financiero</a></li>
-                        <li><a href="#">Mis Compras</a></li>
+                        <li><a href="/Checkin">Check-in</a></li>
                         <li><a href="/List_Reservas">Mis Reservas</a></li>
                         <li v-if="profile.subscribedToFeed === 1"><a href="/">Noticias</a></li>
                         <li> <div class="btn-cerrar" @click="logout">

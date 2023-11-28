@@ -2,11 +2,11 @@
   <div class = "checkin-container">
     <spinner :showSpinner="showSpinner"></spinner>
     <div class="checkin-info-container">
-        <h1 class="title">CheckIn</h1>
+        <h1 class="title">Check-In</h1>
         <hr>
         <p class="texto">Por favor ingrese su código de reserva y DNI del pasajero</p>
 
-        <label class="text-orderCOD" for="orderCOD">OrderCOD</label>
+        <label class="text-orderCOD" for="orderCOD">Código de la orden</label>
         <input v-model="orderCOD" class = "input-orderCOD" type="text" id="orderCOD">
 
         <label class="text-passengerDNI" for="passengerDNI">DNI del pasajero</label>
@@ -15,7 +15,7 @@
         <button class = "search-button" @click="consult">Buscar</button>
     </div>
     <div class="info-container">
-        <h1 class="title-info">Detalle pasajero</h1>
+        <h1 class="title-info">Detalle del pasajero</h1>
         <!-- <div class="back-response" v-if="backendResponse">
             <p>{{ backendResponse }}</p>
         </div> -->
@@ -57,17 +57,21 @@
 
 <style lang="scss" scoped>
    
-     $light-color:#312c02;
-     $degradado: rgba(149, 168, 238, 0.11);
-     $bg:rgba(6, 31, 14, 0.947);
-     $azul-claro: #CFE0EB;
-     $gris:#F7F7F7;
-     $verde: #00BD8E;
-     $azul: #0D629B;
-     $blanco: #FFFFFF;
-     $negro:#1A1320;
-     $accent:#0B97F4;
-     $secondary:#ceeafd;
+   $light-color: #2e2b18;
+    $degradado: rgba(34, 33, 39, 0.552);
+    $bg: rgba(25, 32, 57, 0.947);
+    $azul-claro: #cfe0eb;
+    $gris: #f7f7f7;
+    $verde: #00bd8e;
+    $azul: #0d629b;
+    $blanco: #ffffff;
+    $negro: #1a1320;
+    $blue: #54b2f1;
+    $accent: #0b97f4;
+    $accent2: #007bff;
+    $gris2: #364265;
+    $accent3: rgba(149, 168, 238, 0.11);
+    $secondary: #ceeafd;
      html{
         /* 
         Estilo CSS para la vista Home.vue del proyecto Vue.js. 
@@ -136,15 +140,15 @@
 
     .text-passengerDNI {
         font-size: 1.5rem;
-        font-weight: 400;
-        color: $azul;
+        font-weight: bold;
+        color: $negro;
         margin-top: 2rem;
     }
 
     .text-orderCOD {
         font-size: 1.5rem;
-        font-weight: 400;
-        color: $azul;
+        font-weight: bold;
+        color: $negro;
         margin-top: 2rem;
     }
 
@@ -156,6 +160,21 @@
         text-align: center;
         padding-top: 3rem;
         background-color: $secondary;
+        .texto {
+            font-size: 1.5rem;
+            font-weight: 400;
+            color: $negro;
+            margin-top: 2rem;
+        }
+        .title {
+            margin: 0;
+            color: $azul;
+            font-weight: bold;
+            font-size: 3rem; /* Aumenta el tamaño de la fuente */
+            letter-spacing: 1px; /* Aumenta el espaciado entre las letras */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.456); /* Añade una sombra al texto */
+            font-family: "Arial", sans-serif; /* Cambia la fuente (opcional) */
+            }
     }
 
     .info-container {
@@ -169,14 +188,7 @@
         padding: 5rem;
     }
 
-    .title {
-        text-transform: capitalize;
-        font-size: 2.25rem;
-        font-weight: 600;
-        letter-spacing: 1px;
-        color: $azul;
-        
-    }
+    
 
     .title-info {
         text-transform: capitalize;
@@ -188,12 +200,7 @@
         
     }
 
-    .texto {
-        font-size: 1.5rem;
-        font-weight: 400;
-        color: $negro;
-        margin-top: 2rem;
-    }
+   
 
     .back-response {
         font-size: 1.5rem;
@@ -242,16 +249,15 @@
     }
 
     .search-button {
-        margin-top:1rem;
-        display:inline-block;
-        padding: 1rem 3rem; 
+        background-color: $gris2;
+        color: $blanco;
+        margin-top: 1rem;
+        display: center;
+        padding: 1rem 3rem;
         font-size: 1.7rem;
-        color: $accent;
-        border:$azul .2rem solid; 
-        border-radius:5rem;
-        cursor: pointer;
-        background: $blanco;
-        box-shadow: 1px 5px 5px rgba(0.5, 0.1, 0.1, 0.1);
+        border: $azul-claro .2rem solid;
+        border-radius: 5rem;
+        box-shadow: inset 0px 0px 0px 1px $negro;
 
         &:hover{
             background: $accent;
@@ -262,16 +268,6 @@
     
     }
 
-    /* .inputs-container p {
-        margin: 0;
-        .span {
-            color: $accent;
-            font-weight: 600;
-            cursor: pointer;
-         }
-    } */
-
-    
 
     @media screen and (max-width: 1000px) {
         .checkin-container {

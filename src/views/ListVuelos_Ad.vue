@@ -29,7 +29,7 @@
             <tr v-if="filteredFlights.length === 0">
               <td class="warning" colspan="3">No se encontraron vuelos</td>
             </tr>
-            <tr v-for="flight in filteredFlights" :key="flight.ID" class="flight-item">
+            <tr v-for="flight in filteredFlights" :key="flight.id" class="flight-item">
               <td class="flight">{{ flight.origin }} - {{ flight.destination }} </td>
               <td>{{ formatDate(flight.flightDate) }}</td>
               <td> {{ formatDuration(flight.flightDuration) }} 
@@ -49,8 +49,10 @@
               
               <td>
                 <!-- Add the click event to the delete button -->
-                <button class="button-delete" @click="removeFlight(flight)">x</button>
+                <!-- Add the click event to the cancel button -->
+                <button class="button-delete" @click="logIdAndCancelFlight(flight.id)">x</button>
               </td>
+              <td><button class="editar" @click="EditFlight(flight.id)">Editar</button> </td>
             </tr>
           </tbody>
         </table>
@@ -58,7 +60,7 @@
       </div>
       <div class="right-button">
           <button class="crear" href= "/CrearVuelo" @click="createFlight">Crear Vuelo</button>
-          <button class="editar" href= "/EditaVuelo" @click="EditFlight">Editar Vuelo</button>
+         
         </div>
     </div>
   </div>
@@ -153,6 +155,7 @@ td del {
         .crear{
           margin: 41rem;
         }
+       
         
       
       }
@@ -225,6 +228,11 @@ td del {
       padding: 8px;
       text-align: center; 
     }
+    .editar{
+          background-color: transparent;
+          font-weight: bolder;
+          color:$azul;
+      }
     .button-delete {
       background-color:  #ea1e1e;
       color: white;
@@ -269,14 +277,17 @@ td del {
 import errorModal from "@/components/errorModal.vue";
 import spinner from "@/components/spinner.vue";
 import Footer from "@/components/footer.vue";
-import flightService from "@/services/flightService/listByStateService.js";
-import ServiceRemove from"@/services/flightService/deleteFlightService.js";
+import flightService from "@/services/FlightService/listByStateService.js";
+import cancelFlightService from "@/services/FlightService/deleteFlightService.js";
+import successModal from "@/components/successModal.vue";
 export default {
   data() {
     return {
+      showSpinner: false, // Initialize as hidden
+      successMessage: null,
+      showSuccessMessage: false,
       flights: [],
       filter: 'ON_TIME',
-      id: '',
     };
   },
   created() {
@@ -338,21 +349,41 @@ export default {
       this.$router.push("/CrearVuelo");
     },
 
-    async removeFlight(id) {
-      try {
-        await ServiceRemove.deleteFlight(id);
-        // Refresh the flights after deletion
-        this.fetchFlightsByState(this.filter);
-      } catch (error) {
-        console.error("Error deleting flight:", error);
+    logIdAndCancelFlight(id) {
+    console.log("vuelo a cancelar", id);
+    this.cancelFlight(id);
+  },
+
+    async cancelFlight(id) {
+      if (window.confirm('¿Estás seguro de que quieres borrar este vuelo?')) {
+        try {
+          await cancelFlightService.deleteFlight(id);
+          this.successMessage = "¡Vuelo Cancelado correctamente!";
+          this.showSuccessMessage = true;
+          this.showSpinner = false;
+          // Refresh the flights after cancellation
+          this.fetchFlightsByState(this.filter);
+        } 
+        catch (error) {
+          console.error("Error cancelling flight:", error);
+        }
       }
     },
+    EditFlight(flightId) {
+      // Store the flight ID in the session storage
+      window.sessionStorage.setItem('editFlightId', flightId);
+      // Navigate to the EditarVuelo view
+      this.$router.push('/EditarVuelo');
+    },
+
+    
 
   },
   components: {
     errorModal,
     spinner,
     Footer,
+    successModal,
   },
 };
 </script>
