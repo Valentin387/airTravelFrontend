@@ -1,8 +1,17 @@
 <template>
     <div class="payment-module">
-      <h1 class="tittle">Confirmar y Pagar</h1>
+        <div class="menu">
+      <nav>
+        <ul>
+          <li><a @click="showAddCardForm">Agregar tarjeta</a></li>
+          <li><a @click="showUserCards">Ver tarjetas</a></li>
+        </ul>
+      </nav>
+    </div>
+    <br>
+      <h1 class="tittle">Agregar tarjeta</h1>
       <div class="payment-options">
-        <p class="payment-label">Pagar con: </p>
+        <p class="payment-label"><strong>Pagar con:</strong> </p>
         <label @click="selectOption('credito')" :class="{ selected: selectedOption === 'credito' }">Tarjeta de crédito</label>
         <label @click="selectOption('debito')" :class="{ selected: selectedOption === 'debito' }">Tarjeta de débito</label>
       </div>
@@ -12,12 +21,18 @@
           <input type="text" placeholder="Nombre de titular" v-model="cardholderName" @input="restrictToLetters">
           <input type="number" placeholder="Número de tarjeta" v-model="creditCardNumber" @input="restrictToNumbers">
           <div class="expiration-cvc">
-            <input type="number" placeholder="MM" v-model="expirationMonth" @input="restrictMonth">
+            <select v-model="expirationMonth">
+              <option disabled value="">MM</option>
+              <option v-for="month in 12" :key="month" :value="month">
+                {{ month < 10 ? '0' + month : month }}
+              </option>
+            </select>
             <input type="number" placeholder="YY" v-model="expirationYear" @input="restrictYear">
             <input type="number" placeholder="CVC" v-model="cvc" @input="restrictCVC">
-            <input type="number" placeholder="Saldo" v-model="balance" >
+            <input type="number" placeholder="Saldo" v-model="balance" @input="restrictBalance">
+
           </div>
-          <button class="button-confi" @click="addNewCard">Agregar tarjeta</button>
+          <button class="button-confi" @click="addNewCard">Guardar tarjeta</button>
         </div>
       </div>
       <div v-if="selectedOption === 'debito'">
@@ -26,12 +41,18 @@
           <input type="text" placeholder="Nombre de titular" v-model="cardholderName" @input="restrictToLetters">
           <input type="number" placeholder="Número de tarjeta" v-model="creditCardNumber" @input="restrictToNumbers">
           <div class="expiration-cvc">
-            <input type="number" placeholder="MM" v-model="expirationMonth" @input="restrictMonth">
+            <select  v-model="expirationMonth">
+              <option disabled value="">MM</option>
+              <option v-for="month in 12" :key="month" :value="month">
+                {{ month < 10 ? '0' + month : month }}
+              </option>
+            </select>
             <input type="number" placeholder="YY" v-model="expirationYear" @input="restrictYear">
             <input type="number" placeholder="CVC" v-model="cvc" @input="restrictCVC">
-            <input type="number" placeholder="Saldo" v-model="balance" >
+            <input type="number" placeholder="Saldo" v-model="balance" @input="restrictBalance">
+
           </div>
-          <button class="button-confi" @click="addNewCard">Agregar tarjeta</button>
+          <button class="button-confi" @click="addNewCard">Guardar tarjeta</button>
          
         </div>
       </div>
@@ -89,6 +110,8 @@ html {
     background-color: $azul;
   }
 }
+
+
     .payment-module {
     margin: 0 auto;
     padding: 20px;
@@ -98,6 +121,33 @@ html {
     margin: 0 auto; /* Centrar horizontalmente */
     margin-top: 10rem; /* Centrar verticalmente */
     background-color: $secondary;
+    .menu {
+      display: flex;
+      justify-content: space-around;
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: $azul;
+    }
+
+    .menu li {
+      float: left;
+      text-decoration: none;
+      list-style: none; /* Agrega esta línea */
+    }
+
+    .menu li a {
+      display: block;
+      color: white;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+    }
+
+    .menu li a:hover {
+      background-color: $blue;
+    }
 
     .payment-options {
         display: flex;
@@ -140,6 +190,16 @@ html {
         padding: 10px;
         border: 1px solid #ccc;
         border-radius: 5px;
+      }
+      select{
+        width: 30%;
+        margin-top: 10rem;
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        width: calc(50% - 1px); /* Dividir en dos columnas con espacio entre ellos */
+        margin-right: 10px;
       }
   
       .expiration-cvc {
@@ -243,6 +303,7 @@ import Footer from "@/components/footer.vue";
           expirationDate: `${this.expirationMonth}/${this.expirationYear}`, // Fecha de expiración
           cvc: this.cvc // Código de seguridad CVC
         };
+   
 
         FinancialService.addCard(cardData.userID, cardData.balance, cardData.type, cardData.number, cardData.name, cardData.expirationDate, cardData.cvc)
           .then(response => {
@@ -254,28 +315,36 @@ import Footer from "@/components/footer.vue";
             // Manejo de errores
           });
       },
-      // Método para restringir la longitud del mes a 2 dígitos
-      restrictMonth() {
-        if (this.expirationMonth.length > 2) {
-          this.expirationMonth = this.expirationMonth.slice(0, 2);
+      restrictBalance() {
+        const maxLength = 10; // Por ejemplo, máximo de 10 dígitos permitidos para el saldo
+        const enteredBalance = String(this.balance);
+
+        // Verificar si el saldo ingresado contiene caracteres no numéricos
+
+        // Limitar la longitud del saldo a maxLength
+        if (enteredBalance.length > maxLength) {
+          this.balance = Number(enteredBalance.slice(0, maxLength));
         }
       },
+
       // Método para restringir el año a 2 dígitos
       restrictYear() {
-          if (this.expirationYear.length > 2) {
-            this.expirationYear = this.expirationYear.slice(0, 2);
+          if (String(this.expirationYear).length > 2) {
+            this.expirationYear = Number(String(this.expirationYear).slice(0, 2));
         }
       },
       restrictToNumbers() {
-        this.creditCardNumber = this.creditCardNumber.replace(/\D/g, '');
+        if (String(this.creditCardNumber).length > 19) {
+          this.creditCardNumber = Number(String(this.creditCardNumber).slice(0, 19));
+        }
       },
       restrictToLetters() {
         this.cardholderName = this.cardholderName.replace(/[^A-Za-z\s]/g, '');
       },
       restrictCVC() {
-        this.cvc = this.cvc.replace(/\D/g, '');
-        if (this.cvc.length > 3) {
-          this.cvc = this.cvc.slice(0, 3);
+     
+        if (String(this.cvc).length > 3) {
+          this.cvc = Number(String(this.cvc).slice(0, 3));
         }
       },
       validateTitularName() {
