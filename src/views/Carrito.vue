@@ -24,8 +24,9 @@
               <td class="left">{{ item.destination }}</td>
               <td class="left">{{ formatDate(item.flightDate) }}</td>
               <td class="left">{{ item.seats.length }}</td>
-              <td class="left">${{ item.costByPerson }}</td>
+              <td class="left" :class="{ 'strike-through': item.costByPersonOffer > 0 }">${{ item.costByPerson }}</td>
               <td class="left">${{ item.costByPersonOffer }}</td>
+  
               
               <td>
                 <button class="button-delete" @click="removeItem(index)">X</button>
@@ -99,7 +100,9 @@ html {
     margin-top: 10rem; /* Centrar verticalmente */
     background-color: $secondary;
     }
-
+    .strike-through {
+      text-decoration: line-through;
+    }
     .cart-header {
     text-align: left;
     padding: 10px;
@@ -175,17 +178,7 @@ import { roundToNearestMinutes } from "date-fns";
 export default {
   data() {
     return {
-      /*
-      cartItems: {
-        flightId: "",
-        origin: "",
-        destination: "",
-        flightDate: "",
-        state: "",
-        seats: [],
-        costByPerson: "",
-        costByPersonOffer: "",
-      }, */
+     
       cartItems: [],
       total: 0, // You may need to initialize this based on your requirements
     };
@@ -268,8 +261,8 @@ export default {
             console.error(error);
           });
 
-      listItems();
-      getTotal();
+          listItems();
+          getTotal();
     },
     /*
     updateSeatQuantity(item) {

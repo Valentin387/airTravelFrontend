@@ -412,30 +412,27 @@ export default {
 
         logout(){
             this.isMenuUsuarioActive = false; // Cierra el menú desplegable del usuario
+            this.userRole=null;
             // Limpiar sessionStorage
             window.sessionStorage.clear();
             logoutService.logout().then((response) => {
 
-          // Maneja la respuesta exitosa aquí
+            // Maneja la respuesta exitosa aquí
+                if (response.status === 200) {
+                    console.log("logout exitoso", response.data);
+                }
+            })
+            .catch((error) => {
+                console.error("Something happened:", error);
+                this.errorMessage = error.response.data.message || "Something happened, try to logout and login again please";
+                this.showErrorMessage = true;
+            }
+            );
+            // Remove the JWT token from the localStorage
+            window.sessionStorage.removeItem("JWTtoken");
+            this.$router.push("/Login");
          
-          if (response.status === 200) {
-            console.log("logout exitoso", response.data);
-            // Redirigir al usuario a la página de inicio de sesión
-             this.$router.push('/');
-       
-            // Redirige al usuario o realiza otras acciones según tus necesidades
-          }
-        })
-        .catch((error) => {
-            console.error("Something happened:", error);
-            this.errorMessage = error.response.data.message || "Something happened, try to logout and login again please";
-            this.showErrorMessage = true;
-          }
-        );
-        // Remove the JWT token from the localStorage
-        window.sessionStorage.removeItem("JWTtoken");
-        this.$router.push("/Login");
-    },
+        },
 
     },
 };

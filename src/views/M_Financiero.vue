@@ -3,37 +3,36 @@
       <h1 class="tittle">Confirmar y Pagar</h1>
       <div class="payment-options">
         <p class="payment-label">Pagar con: </p>
-        <label @click="selectOption('credit-card')" :class="{ selected: selectedOption === 'credit-card' }">Tarjeta de crédito</label>
-        <label @click="selectOption('debit-card')" :class="{ selected: selectedOption === 'debit-card' }">Tarjeta de débito</label>
+        <label @click="selectOption('credito')" :class="{ selected: selectedOption === 'credito' }">Tarjeta de crédito</label>
+        <label @click="selectOption('debito')" :class="{ selected: selectedOption === 'debito' }">Tarjeta de débito</label>
       </div>
-      <div v-if="selectedOption === 'credit-card'">
+      <div v-if="selectedOption === 'credito'">
         <h2>Tarjeta de crédito</h2>
         <div class="paypal-details">
           <input type="text" placeholder="Nombre de titular" v-model="cardholderName" @input="restrictToLetters">
-          <input type="text" placeholder="Número de tarjeta" v-model="creditCardNumber" @input="restrictToNumbers">
+          <input type="number" placeholder="Número de tarjeta" v-model="creditCardNumber" @input="restrictToNumbers">
           <div class="expiration-cvc">
-            <input type="text" placeholder="MM" v-model="expirationMonth" @input="restrictMonth">
-            <input type="text" placeholder="YY" v-model="expirationYear" @input="restrictYear">
-            <input type="text" placeholder="CVC" v-model="cvc" @input="restrictCVC">
+            <input type="number" placeholder="MM" v-model="expirationMonth" @input="restrictMonth">
+            <input type="number" placeholder="YY" v-model="expirationYear" @input="restrictYear">
+            <input type="number" placeholder="CVC" v-model="cvc" @input="restrictCVC">
+            <input type="number" placeholder="Saldo" v-model="balance" >
           </div>
-          <label class="checkbox-label">
-            <input type="checkbox" v-model="saveCardCheckbox"> Guardar tarjeta
-          </label>
+          <button class="button-confi" @click="addNewCard">Agregar tarjeta</button>
         </div>
       </div>
-      <div v-if="selectedOption === 'debit-card'">
+      <div v-if="selectedOption === 'debito'">
         <h2>Tarjeta de débito</h2>
         <div class="paypal-details">
           <input type="text" placeholder="Nombre de titular" v-model="cardholderName" @input="restrictToLetters">
-          <input type="text" placeholder="Número de tarjeta" v-model="creditCardNumber" @input="restrictToNumbers">
+          <input type="number" placeholder="Número de tarjeta" v-model="creditCardNumber" @input="restrictToNumbers">
           <div class="expiration-cvc">
-            <input type="text" placeholder="MM" v-model="expirationMonth" @input="restrictMonth">
-            <input type="text" placeholder="YY" v-model="expirationYear" @input="restrictYear">
-            <input type="text" placeholder="CVC" v-model="cvc" @input="restrictCVC">
+            <input type="number" placeholder="MM" v-model="expirationMonth" @input="restrictMonth">
+            <input type="number" placeholder="YY" v-model="expirationYear" @input="restrictYear">
+            <input type="number" placeholder="CVC" v-model="cvc" @input="restrictCVC">
+            <input type="number" placeholder="Saldo" v-model="balance" >
           </div>
-          <label class="checkbox-label">
-            <input type="checkbox" v-model="saveCardCheckbox"> Guardar tarjeta
-          </label>
+          <button class="button-confi" @click="addNewCard">Agregar tarjeta</button>
+         
         </div>
       </div>
       <button class="button-confi" @click="confirmPayment">Confirmar y pagar</button>
@@ -130,7 +129,7 @@ html {
     .paypal-details {
       margin-top: 20px;
   
-      input[type="text"] {
+      input {
         /*border: 1px solid #0070ba; 
         padding: 10px;
         margin-top: 5px;
@@ -146,7 +145,7 @@ html {
       .expiration-cvc {
         display: flex;
         justify-content: space-between;
-        input[type="text"] {
+        input[type="number"] {
           /*border: 1px solid #0070ba;
           padding: 10px;*/
           margin-top: 10rem;
@@ -155,7 +154,7 @@ html {
           border: 1px solid #ccc;
           border-radius: 5px;
           width: calc(50% - 1px); /* Dividir en dos columnas con espacio entre ellos */
-          & + input[type="text"] {
+          & + input[type="number"] {
             margin-left: 10px;
           }
         }
@@ -200,6 +199,8 @@ html {
 </style>
   
 <script>
+import FinancialService from "@/services/finantialModuleService/addCardService.js";
+
 import errorModal from "@/components/errorModal.vue";
 import spinner from "@/components/spinner.vue";
 import Footer from "@/components/footer.vue";
@@ -207,7 +208,10 @@ import Footer from "@/components/footer.vue";
   export default {
     data() {
       return {
-        selectedOption: 'credit-card',
+        token: window.sessionStorage.getItem("JWTtoken"),
+        userID: '',
+        balance: '',
+        selectedOption: 'credito',
         saveCardCheckbox: false, // Variable para controlar si se debe guardar la tarjeta
         expirationMonth: '',
         expirationYear: '',
@@ -218,6 +222,38 @@ import Footer from "@/components/footer.vue";
       };
     },
     methods: {
+      addNewCard() {
+        const token = window.sessionStorage.getItem("JWTtoken");
+            if (token && token != null) {
+                
+                const token = window.sessionStorage.getItem("JWTtoken");
+                if (this.token) {
+                  const tokenData = JSON.parse(atob(token.split('.')[1]));
+                  this.userID = tokenData.ID;
+                  console.log('usuario:', this.userID);
+                }
+            }
+        const cardData = {
+          
+          userID: this.userID, // Reemplaza con el ID del usuario
+          balance: this.balance, // Define el saldo inicial
+          type: this.selectedOption === 'credito' ? 'credito' : 'debito', // Verifica el tipo de tarjeta seleccionado
+          number: this.creditCardNumber, // Número de tarjeta ingresado en el campo
+          name: this.cardholderName, // Nombre del titular ingresado
+          expirationDate: `${this.expirationMonth}/${this.expirationYear}`, // Fecha de expiración
+          cvc: this.cvc // Código de seguridad CVC
+        };
+
+        FinancialService.addCard(cardData.userID, cardData.balance, cardData.type, cardData.number, cardData.name, cardData.expirationDate, cardData.cvc)
+          .then(response => {
+            console.log('Tarjeta agregada:', response);
+            // Lógica adicional después de agregar la tarjeta
+          })
+          .catch(error => {
+            console.error('Error al agregar la tarjeta:', error.message);
+            // Manejo de errores
+          });
+      },
       // Método para restringir la longitud del mes a 2 dígitos
       restrictMonth() {
         if (this.expirationMonth.length > 2) {

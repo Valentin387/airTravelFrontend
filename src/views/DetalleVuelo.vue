@@ -59,7 +59,7 @@
           </select>
         </div>
         <br>
-        <p class="total"><strong> Total : $ </strong>{{ flight.price }}</p>
+        <p class="total"><strong> Total : $ </strong>{{ Math.round(flight.price  * 100) / 100 }}</p>
         <div class="action-buttons">
           <button class="right-button" @click="addToCart">Añadir al carrito</button>
         </div>

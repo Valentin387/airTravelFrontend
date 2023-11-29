@@ -4,6 +4,8 @@
     <!-- Left Column - List of flights and seats -->
     <div class="left-column">
       <div v-for="flight in cartItems" :key="flight.flightId" class="flight-section">
+        <hr>
+        <h2><strong> Vuelo: </strong> {{ flight.flightId }}</h2>
         <h3><strong>Origen:</strong> {{ flight.origin }} - <strong>Destino:  </strong> {{ flight.destination }}</h3>
         <ul>
           <li v-for="seat in flight.seats" :key="seat.seatID">
@@ -11,7 +13,7 @@
             <button @click="openPassengerForm(flight, seat)" class="register">Agregar Pasajero</button>
           </li>
           <form @submit.prevent="purchase">
-            <br>
+          
            <button type="submit" class="login">Comprar Ahora</button>
           </form>
         </ul>
@@ -20,7 +22,7 @@
 
     <!-- Right Column - Passenger Form -->
     <div v-if="selectedFlightAndSeat" class="right-column">
-      <h2><strong> Información del Pasajero</strong></h2>
+      <h2><strong> Información del Pasajero </strong> </h2>
       <br>
       <form @submit.prevent="submitPassengerForm" class="login-form">
         <!-- Add your form fields for passenger details -->
@@ -117,7 +119,7 @@ html {
   }
 }
 .purchase-container {
-  height: 100vh;
+  height: auto;
   box-shadow: 3px 3px 6px rgba(1, 0.2, 1, 0.2);
   margin:0 auto;
   width: 90vw;
