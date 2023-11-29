@@ -1,14 +1,15 @@
 <template>
     <div class="payment-module">
-        <div class="menu">
-      <nav>
-        <ul>
-          <li><a @click="showAddCardForm">Agregar tarjeta</a></li>
-          <li><a @click="showUserCards">Ver tarjetas</a></li>
-        </ul>
-      </nav>
-    </div>
+      <div class="menu">
+        <nav>
+          <ul>
+            <li><a @click="showAddCardForm">Agregar tarjeta</a></li>
+            <li><a @click="showUserCards">Ver tarjetas</a></li>
+          </ul>
+        </nav>
+      </div>
     <br>
+    <div class="container-agregar" v-if="showAddCard"> 
       <h1 class="tittle">Agregar tarjeta</h1>
       <div class="payment-options">
         <p class="payment-label"><strong>Pagar con:</strong> </p>
@@ -56,30 +57,55 @@
          
         </div>
       </div>
-      <button class="button-confi" @click="confirmPayment">Confirmar y pagar</button>
+   
     </div>
+    <div  class="container" v-if="showUserListCard">
+      <h1>Tarjetas del Usuario</h1>
+      <div class="container-Lista">
+        <div v-for="(card, index) in userCards" :key="index" class="card">
+          <button class="button-delete" @click="removeCard(card.id)">X</button>
+          <div>
+            <strong>Tipo:</strong> {{ card.type }} 
+          </div>
+          <div>
+            <strong>Número:</strong> {{ card.number }}
+          </div>
+          <div>
+            <strong>Nombre del Titular:</strong> {{ card.name }}
+          </div>
+          <!-- Agrega más detalles según la estructura de tus tarjetas -->
+          <hr />
+          <div>
+            <strong>Balance:</strong> {{ card.balance }}
+          </div>
+        </div>
+      </div>
+    </div>
+      
+  </div>
  
       <!------------------------------------------------FOOTER------------------------------------------->
-
+    
   <Footer></Footer>
 </template>
   
-<style lang="scss">
+<style lang="scss" scoped>
 $light-color: #312c02;
 $degradado: rgba(39, 64, 153, 0.479);
 $bg: rgba(6, 31, 14, 0.873);
 $azul-claro: #cfe0eb;
 $gris: #f7f7f7;
 $gris2: #364265;
-$verde: #00bd8e;
-$azul: #0d629b;
+$verde: rgb(0, 189, 142);
 $blanco: #ffffff;
 $negro: #1a1320;
 $accent: #0b97f4;
 $accent3: #77797a;
 $blue: #54b2f1;
 $secondary: #ceeafd;
+$azul: #0d629b;
 $card: #0d629b17;
+$bodycol:#e6eff6;
 
 html {
   /* 
@@ -112,11 +138,11 @@ html {
 }
 
 
-    .payment-module {
+  .payment-module {
     margin: 0 auto;
     padding: 20px;
     border-radius: 5px;
-    height: 85vh;
+    height: auto;
     width: 90vw;
     margin: 0 auto; /* Centrar horizontalmente */
     margin-top: 10rem; /* Centrar verticalmente */
@@ -256,11 +282,40 @@ html {
         background-color: #00558a; /* Cambiar el color de fondo al pasar el mouse */
     }
   }
+  .container-Lista {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  
+  }
+  .container-Lista .button-delete {
+    float: right;
+    background-color: rgb(212, 8, 8);
+    color: white;
+    border-radius: 15px;
+    width: 20px;
+    text-align: center;
+    cursor: pointer;
+    
+  }
+
+  .card {
+    width: 300px;
+    padding: 20px;
+    margin: 10px;
+    background:#54b2f138;
+    border: 1px solid $azul;
+    box-shadow: 0px 5px 6px rgba(5, 0, 0, 0.2);
+    border-radius: 5px;
+    
+  }
 </style>
   
 <script>
 import FinancialService from "@/services/finantialModuleService/addCardService.js";
-
+import FinancialServiceList from "@/services/finantialModuleService/listCardsService.js";
+import FinancialServiceRemove from "@/services/finantialModuleService/removeCardService.js";
+import FinancialServiceEdit from "@/services/finantialModuleService/editBalanceService.js";
 import errorModal from "@/components/errorModal.vue";
 import spinner from "@/components/spinner.vue";
 import Footer from "@/components/footer.vue";
@@ -269,6 +324,7 @@ import Footer from "@/components/footer.vue";
     data() {
       return {
         token: window.sessionStorage.getItem("JWTtoken"),
+        userCards: [], // Arreglo para almacenar las tarjetas del usuario
         userID: '',
         balance: '',
         selectedOption: 'credito',
@@ -279,18 +335,67 @@ import Footer from "@/components/footer.vue";
         cardholderName: '',
         cvc: '',
         titularName: '',
+        showAddCard: true, // Variable para controlar la visualización del formulario
+        showUserListCard: false, // Variable para controlar la visualización de las tarjetas del usuario
       };
     },
+    mounted() {
+      this.getUserCards();
+    },
     methods: {
-      addNewCard() {
-        const token = window.sessionStorage.getItem("JWTtoken");
+      showAddCardForm() {
+        this.showAddCard = true;
+        this.showUserListCard = false; // Variable para controlar la visualización de las tarjetas del usuario
+      },
+
+      // Método para ocultar el formulario de agregar tarjeta
+      showUserCards() {
+        this.showAddCard = false;
+  
+        this.showUserListCard = true;
+        // Agrega lógica adicional si necesitas manejar la vista de las tarjetas del usuario
+      },
+      async removeCard(cardId) {
+        try {
+          await FinancialServiceRemove.removeCard(cardId);
+          // Vuelve a cargar las tarjetas después de eliminar una
+          this.getUserCards();
+          console.log('Tarjeta eliminada con éxito');
+          window.alert('Tarjeta eliminada con éxito');
+        } catch (error) {
+          console.error('Error al eliminar la tarjeta:', error.message);
+          // Manejo de errores
+        }
+      },
+      async getUserCards() {
+        try {
+          const token = window.sessionStorage.getItem("JWTtoken");//Obtener el token 
             if (token && token != null) {
-                
                 const token = window.sessionStorage.getItem("JWTtoken");
                 if (this.token) {
                   const tokenData = JSON.parse(atob(token.split('.')[1]));
                   this.userID = tokenData.ID;
-                  console.log('usuario:', this.userID);
+                  console.log('usuario:', this.userID);  //Obtener el ID de usuario del token
+                }
+            }
+          // Llama al servicio listCards con el ID del usuario
+          const response = await FinancialServiceList.listCards(this.userID);
+
+          // Actualiza el arreglo userCards con las tarjetas obtenidas
+          this.userCards = response.data; // Suponiendo que el servicio devuelve un arreglo de tarjetas
+        } catch (error) {
+          console.error('Error al obtener las tarjetas:', error.message);
+          // Manejo de errores
+        }
+      },
+      addNewCard() {
+        const token = window.sessionStorage.getItem("JWTtoken");//Obtener el token 
+            if (token && token != null) {
+                const token = window.sessionStorage.getItem("JWTtoken");
+                if (this.token) {
+                  const tokenData = JSON.parse(atob(token.split('.')[1]));
+                  this.userID = tokenData.ID;
+                  console.log('usuario:', this.userID);  //Obtener el ID de usuario del token
                 }
             }
         const cardData = {
@@ -323,7 +428,7 @@ import Footer from "@/components/footer.vue";
 
         // Limitar la longitud del saldo a maxLength
         if (enteredBalance.length > maxLength) {
-          this.balance = Number(enteredBalance.slice(0, maxLength));
+          
         }
       },
 

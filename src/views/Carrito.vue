@@ -44,7 +44,7 @@
   <Footer></Footer>
 </template>
   
-<style lang="scss">
+<style lang="scss" scoped>
     $light-color: #312c02;
   $degradado: rgba(39, 64, 153, 0.479);
   $bg: rgba(6, 31, 14, 0.873);

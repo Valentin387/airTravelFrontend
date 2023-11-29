@@ -370,7 +370,7 @@ export default {
         },
         redirectToLogin() {
             this.$router.push("/Login"); // Redirige a la página de inicio de sesión
-            this.userRole=null;
+            
     
         },
         getUserRole() {

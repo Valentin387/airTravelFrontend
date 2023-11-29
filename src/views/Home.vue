@@ -392,6 +392,7 @@ $accent3: #77797a;
 $blue: #54b2f1;
 $secondary: #ceeafd;
 $card: #0d629b17;
+$bodycol:#e6eff6;
 
 @mixin grid($val) {
   display: grid;
@@ -431,7 +432,7 @@ html {
 
 body {
   //FONDO DE LA PAGINA
-  background:#e6eff6;
+  background: $bodycol;
   //background-image: linear-gradient(to top, #fcfeff 0%, #fbfeff 100%);
 
   overflow-x: hidden;
