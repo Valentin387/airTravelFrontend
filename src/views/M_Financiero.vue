@@ -3,8 +3,8 @@
       <div class="menu">
         <nav>
           <ul>
-            <li><a @click="showAddCardForm">Agregar tarjeta</a></li>
-            <li><a @click="showUserCards">Ver tarjetas</a></li>
+            <li><a @click="showAddCardForm"><span class="material-symbols-outlined">add_card</span> Agregar tarjeta</a></li>
+            <li><a @click="showUserCards"><span class="material-symbols-outlined">credit_card</span> Ver tarjetas</a></li>
           </ul>
         </nav>
       </div>
@@ -19,8 +19,8 @@
       <div v-if="selectedOption === 'credito'">
         <h2>Tarjeta de crédito</h2>
         <div class="paypal-details">
-          <input type="text" placeholder="Nombre de titular" v-model="cardholderName" @input="restrictToLetters">
-          <input type="number" placeholder="Número de tarjeta" v-model="creditCardNumber" @input="restrictToNumbers">
+          <input type="text" placeholder="Nombre de titular" v-model="cardholderName" >
+          <input type="number" placeholder="Número de tarjeta" v-model="creditCardNumber" >
           <div class="expiration-cvc">
             <select v-model="expirationMonth">
               <option disabled value="">MM</option>
@@ -28,9 +28,9 @@
                 {{ month < 10 ? '0' + month : month }}
               </option>
             </select>
-            <input type="number" placeholder="YY" v-model="expirationYear" @input="restrictYear">
-            <input type="number" placeholder="CVC" v-model="cvc" @input="restrictCVC">
-            <input type="number" placeholder="Saldo" v-model="balance" @input="restrictBalance">
+            <input type="number" placeholder="YY" v-model="expirationYear" >
+            <input type="number" placeholder="CVC" v-model="cvc" >
+            <input type="number" placeholder="Saldo" v-model="balance" >
 
           </div>
           <button class="button-confi" @click="addNewCard">Guardar tarjeta</button>
@@ -39,8 +39,8 @@
       <div v-if="selectedOption === 'debito'">
         <h2>Tarjeta de débito</h2>
         <div class="paypal-details">
-          <input type="text" placeholder="Nombre de titular" v-model="cardholderName" @input="restrictToLetters">
-          <input type="number" placeholder="Número de tarjeta" v-model="creditCardNumber" @input="restrictToNumbers">
+          <input type="text" placeholder="Nombre de titular" v-model="cardholderName" >
+          <input type="number" placeholder="Número de tarjeta" v-model="creditCardNumber" >
           <div class="expiration-cvc">
             <select  v-model="expirationMonth">
               <option disabled value="">MM</option>
@@ -48,10 +48,10 @@
                 {{ month < 10 ? '0' + month : month }}
               </option>
             </select>
-            <input type="number" placeholder="YY" v-model="expirationYear" @input="restrictYear">
-            <input type="number" placeholder="CVC" v-model="cvc" @input="restrictCVC">
-            <input type="number" placeholder="Saldo" v-model="balance" @input="restrictBalance">
-
+            <input type="number" placeholder="YY" v-model="expirationYear" >
+            <input type="number" placeholder="CVC" v-model="cvc">
+            <input type="number" placeholder="Saldo" v-model="balance">
+          
           </div>
           <button class="button-confi" @click="addNewCard">Guardar tarjeta</button>
          
@@ -65,7 +65,9 @@
         <div v-for="(card, index) in userCards" :key="index" class="card">
           <button class="button-delete" @click="removeCard(card.id)">X</button>
           <div>
+            
             <strong>Tipo:</strong> {{ card.type }} 
+           
           </div>
           <div>
             <strong>Número:</strong> {{ card.number }}
@@ -73,16 +75,17 @@
           <div>
             <strong>Nombre del Titular:</strong> {{ card.name }}
           </div>
-          <!-- Agrega más detalles según la estructura de tus tarjetas -->
           <hr />
           <div>
             <strong>Balance:</strong> {{ card.balance }}
           </div>
+          <button class="button-edit" @click="editCardBalance(card.id)">Editar</button>
         </div>
       </div>
     </div>
       
   </div>
+  <success-modal :show-note="showSuccessMessage" :success-message="successMessage" @close="showSuccessMessage = false" />
  
       <!------------------------------------------------FOOTER------------------------------------------->
     
@@ -97,6 +100,7 @@ $azul-claro: #cfe0eb;
 $gris: #f7f7f7;
 $gris2: #364265;
 $verde: rgb(0, 189, 142);
+$verde2:  #4caf50;
 $blanco: #ffffff;
 $negro: #1a1320;
 $accent: #0b97f4;
@@ -137,7 +141,10 @@ html {
   }
 }
 
-
+.material-symbols-outlined {
+  position: relative;
+  top: 5px;
+}
   .payment-module {
     margin: 0 auto;
     padding: 20px;
@@ -246,25 +253,7 @@ html {
         }
       }
 
-      .checkbox-label {
-        display: flex;
-        align-items: center;
-
-            input[type="checkbox"] {
-                
-                width: 20px;
-                height: 20px;
-                border: 1px solid #0070ba; /* Estilo del cuadro de selección */
-                border-radius: 3px;
-                margin-right: 10px; /* Espacio entre el cuadro de selección y el texto */
-                cursor: pointer;
-            }
-
-            input[type="checkbox"]:checked {
-                background-color: #0070ba; /* Cambiar el fondo cuando está seleccionado */
-                border: 1px solid #0070ba; /* Cambiar el borde cuando está seleccionado */
-            }
-        }
+  
     }
 
     .button-confi {
@@ -283,32 +272,60 @@ html {
     }
   }
   .container-Lista {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-  
-  }
-  .container-Lista .button-delete {
-    float: right;
-    background-color: rgb(212, 8, 8);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+
+  .button-edit {
+    background-color: $verde2; /* Color verde */
     color: white;
-    border-radius: 15px;
-    width: 20px;
-    text-align: center;
+    border-radius: 5px;
+    padding: 8px 16px;
+    margin-left: auto;
     cursor: pointer;
-    
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: #45a049; /* Cambia el color al pasar el mouse */
+    }
   }
 
-  .card {
-    width: 300px;
-    padding: 20px;
-    margin: 10px;
-    background:#54b2f138;
-    border: 1px solid $azul;
-    box-shadow: 0px 5px 6px rgba(5, 0, 0, 0.2);
-    border-radius: 5px;
-    
+}
+
+.card {
+  width: 300px;
+  padding: 20px;
+  margin: 10px;
+  background: #54b2f138;
+  border: 1px solid $azul;
+  box-shadow: 0px 5px 6px rgba(5, 0, 0, 0.2);
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  
+
+  .card-details {
+    flex: 1;
+    align-items: left;
   }
+
+  .button-delete  {
+    background-color: rgb(212, 8, 8);
+    color: white;
+    border-radius: 25px;
+    width: 25px;
+    height: 25px;
+    text-align: center;
+    cursor: pointer;
+    margin-left: auto;
+
+  }
+  .button-delete:hover {
+    background-color: rgb(255, 0, 0);
+  }
+ 
+}
+
 </style>
   
 <script>
@@ -319,11 +336,15 @@ import FinancialServiceEdit from "@/services/finantialModuleService/editBalanceS
 import errorModal from "@/components/errorModal.vue";
 import spinner from "@/components/spinner.vue";
 import Footer from "@/components/footer.vue";
+import successModal from "@/components/successModal.vue";
 
   export default {
     data() {
       return {
+        showSpinner: false, // Initialize as hidden
         token: window.sessionStorage.getItem("JWTtoken"),
+        successMessage: "",
+        showSuccessMessage: false,
         userCards: [], // Arreglo para almacenar las tarjetas del usuario
         userID: '',
         balance: '',
@@ -350,25 +371,35 @@ import Footer from "@/components/footer.vue";
 
       // Método para ocultar el formulario de agregar tarjeta
       showUserCards() {
+        
         this.showAddCard = false;
-  
         this.showUserListCard = true;
+        this.showSpinner = true;
+       
         // Agrega lógica adicional si necesitas manejar la vista de las tarjetas del usuario
       },
       async removeCard(cardId) {
-        try {
-          await FinancialServiceRemove.removeCard(cardId);
-          // Vuelve a cargar las tarjetas después de eliminar una
-          this.getUserCards();
-          console.log('Tarjeta eliminada con éxito');
-          window.alert('Tarjeta eliminada con éxito');
-        } catch (error) {
-          console.error('Error al eliminar la tarjeta:', error.message);
-          // Manejo de errores
+        // Muestra un mensaje de confirmación antes de eliminar la tarjeta
+        if (window.confirm('¿Estás seguro de que quieres eliminar esta tarjeta?')) {
+          try {
+            await FinancialServiceRemove.removeCard(cardId);
+            
+            // Vuelve a cargar las tarjetas después de eliminar una
+            this.getUserCards();
+            console.log('Tarjeta eliminada con éxito');
+            this.successMessage = "¡Tarjeta eliminada con éxito!";
+            this.showSuccessMessage = true;
+            this.showSpinner = false;
+          } catch (error) {
+            console.error('Error al eliminar la tarjeta:', error.message);
+            // Manejo de errores
+          }
         }
       },
       async getUserCards() {
+        this.showSpinner = true;
         try {
+         
           const token = window.sessionStorage.getItem("JWTtoken");//Obtener el token 
             if (token && token != null) {
                 const token = window.sessionStorage.getItem("JWTtoken");
@@ -413,45 +444,38 @@ import Footer from "@/components/footer.vue";
         FinancialService.addCard(cardData.userID, cardData.balance, cardData.type, cardData.number, cardData.name, cardData.expirationDate, cardData.cvc)
           .then(response => {
             console.log('Tarjeta agregada:', response);
-            // Lógica adicional después de agregar la tarjeta
+            this.successMessage = "¡Tarjeta agregada con éxito!";
+            this.showSuccessMessage = true;
+            this.showSpinner = true;
+            window.location.reload();
+
           })
           .catch(error => {
             console.error('Error al agregar la tarjeta:', error.message);
             // Manejo de errores
           });
       },
-      restrictBalance() {
-        const maxLength = 10; // Por ejemplo, máximo de 10 dígitos permitidos para el saldo
-        const enteredBalance = String(this.balance);
+      async editCardBalance(cardId) {
+        try {
+          // Lógica para obtener el nuevo saldo (puedes pedirlo al usuario o proporcionar un campo de entrada)
+          const newBalance = prompt('Ingrese el nuevo saldo:');
 
-        // Verificar si el saldo ingresado contiene caracteres no numéricos
+          // Llama al servicio editBalance para actualizar el saldo de la tarjeta
+          await FinancialServiceEdit.editBalance(cardId, newBalance);
 
-        // Limitar la longitud del saldo a maxLength
-        if (enteredBalance.length > maxLength) {
+          // Actualiza la lista de tarjetas después de editar el saldo
+          this.getUserCards();
           
+          console.log('Saldo actualizado con éxito');
+          this.successMessage = "Saldo actualizado con éxito";
+          this.showSuccessMessage = true;
+        } catch (error) {
+          console.error('Error al actualizar el saldo:', error.message);
+          // Manejo de errores
         }
       },
 
-      // Método para restringir el año a 2 dígitos
-      restrictYear() {
-          if (String(this.expirationYear).length > 2) {
-            this.expirationYear = Number(String(this.expirationYear).slice(0, 2));
-        }
-      },
-      restrictToNumbers() {
-        if (String(this.creditCardNumber).length > 19) {
-          this.creditCardNumber = Number(String(this.creditCardNumber).slice(0, 19));
-        }
-      },
-      restrictToLetters() {
-        this.cardholderName = this.cardholderName.replace(/[^A-Za-z\s]/g, '');
-      },
-      restrictCVC() {
-     
-        if (String(this.cvc).length > 3) {
-          this.cvc = Number(String(this.cvc).slice(0, 3));
-        }
-      },
+
       validateTitularName() {
         // Verificar si el nombre del titular solo contiene espacios en blanco
         if (/^\s+$/.test(this.titularName)) {
@@ -462,22 +486,14 @@ import Footer from "@/components/footer.vue";
       selectOption(option) {
         this.selectedOption = option;
       },
-      saveCard() {
-        if (this.saveCardCheckbox) {
-          // Lógica para guardar la tarjeta de Paypal
-          alert('Tarjeta guardada');
-        }
-      },
-      confirmPayment() {
-        // Lógica para confirmar el pago
-        alert('Pago confirmado');
-      },
+    
     },
     components: {
-    errorModal,
-    spinner,
-    Footer,
-  },
+      errorModal,
+      spinner,
+      Footer,
+      successModal,
+    },
   };
 </script>
   

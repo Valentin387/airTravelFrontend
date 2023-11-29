@@ -76,7 +76,8 @@
 }
 
 $blue: #54b2f1;
-$verde: #00bd8e;
+
+$verde:  #4caf50;
 $border: 0.2rem solid $blue;
 $gris: #f7f7f7;
 $azul: #0d629b;
@@ -351,7 +352,7 @@ export default {
             },
         };
     },
-    created() {
+    mounted() {
 
         this.getUserRole(); // Llama a la función para obtener el rol del usuario
 

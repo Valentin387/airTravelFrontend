@@ -60,7 +60,7 @@
     $azul-claro: #CFE0EB;
     $gris: #F7F7F7;
     $gris2: #364265;
-    $verde: #00BD8E;
+    $verde:  #4caf50;
     $azul: #0D629B;
     $blue: #54b2f1;
     $blanco: #FFFFFF;

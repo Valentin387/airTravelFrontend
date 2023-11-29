@@ -134,14 +134,20 @@ html {
     text-align: center; 
     }
 
-    .button-delete {
-    background-color: rgb(212, 8, 8);
-    color: white;
-    border-radius: 15px;
-    width: 20px;
-    text-align: center;
-    cursor: pointer;
+    .button-delete  {
+      background-color: rgb(212, 8, 8);
+      color: white;
+      border-radius: 25px;
+      width: 25px;
+      height: 25px;
+      text-align: center;
+      cursor: pointer;
+      margin-left: auto;
+
     }
+  .button-delete:hover {
+    background-color: rgb(255, 0, 0);
+  }
 
     .cart-total {
     display: inline;
