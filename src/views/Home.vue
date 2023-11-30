@@ -383,7 +383,7 @@ $bg: rgba(6, 31, 14, 0.873);
 $azul-claro: #cfe0eb;
 $gris: #f7f7f7;
 $gris2: #364265;
-$verde: #00bd8e;
+$verde:  #4caf50;
 $azul: #0d629b;
 $blanco: #ffffff;
 $negro: #1a1320;
@@ -853,9 +853,9 @@ export default {
   data() {
     return {
       searchParams: {
-        origin: "",
-        destination: "",
-        flightDate: "",
+        origin: "Pereira",
+        destination: "New York",
+        flightDate: '2024-01-20',
         numPassengers: 1,
       },
    

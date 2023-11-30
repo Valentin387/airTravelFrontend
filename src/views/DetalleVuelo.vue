@@ -53,13 +53,14 @@
         </div>
         <div class="class-input">
           <label for="class"><strong> Clase:</strong></label>
-          <select class="classe" v-model="selectedClass">
+          <select class="classA" placeholder="Seleccione una clase" v-model="selectedClass" required>
+            <option value="" disabled selected>Seleccione una clase</option>
             <option value="First Class">Primera Clase</option>
             <option value="Economic Class">Clase Económica</option>
           </select>
         </div>
         <br>
-        <p class="total"><strong> Total : $ </strong>{{ Math.round(flight.price  * 100) / 100 }}</p>
+        <p class="total"><strong style="color: #4caf50;"> Total :  </strong>${{ Math.round(flight.price  * 100) / 100 }}</p>
         <div class="action-buttons">
           <button class="right-button" @click="addToCart">Añadir al carrito</button>
         </div>
@@ -83,7 +84,7 @@ $degradado: rgba(34, 33, 39, 0.552);
 $bg: rgba(25, 32, 57, 0.947);
 $azul-claro: #cfe0eb;
 $gris: #f7f7f7;
-$verde: #00bd8e;
+$verde:  #4caf50;
 $azul: #0d629b;
 $blanco: #ffffff;
 $negro: #1a1320;
@@ -141,14 +142,6 @@ html {
   overflow: hidden;
 }
 
-.classe select {
-  width: 80%;
-  margin-top: 10rem;
-  margin: 10px 0;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
 
 .flight-image {
   max-width: 50%;
@@ -194,12 +187,13 @@ html {
 .right-button {
   width: 30%;
   padding: 9px;
-  background-color: #364265;
+  background-color:$accent;
   color: #fff;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   margin-bottom: 2rem;
+ 
 
 }
 
@@ -242,8 +236,7 @@ button {
         /* Ajusta el valor según tus preferencias */
       }
 
-      select,
-      input {
+      .classA   {
         width: 30%;
         margin-top: 10rem;
         margin: 1px 0;
@@ -253,7 +246,22 @@ button {
         border-radius: 5px;
         /* Ajusta el valor según tus preferencias */
       }
+      .seats  {
+        width: 10%;
+        margin-top: 10rem;
+        margin: 1px 0;
+        padding: 1rem;
+        margin-left: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        /* Ajusta el valor según tus preferencias */
+      }
+      
     }
+    .total {
+        font-size: 2rem;
+        
+      }
 
   }
 

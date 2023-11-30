@@ -75,7 +75,7 @@ $bg: rgba(6, 31, 14, 0.873);
 $azul-claro: #cfe0eb;
 $gris: #f7f7f7;
 $gris2: #364265;
-$verde: #00bd8e;
+$verde:  #4caf50;
 $azul: #0d629b;
 $blanco: #ffffff;
 $negro: #1a1320;
@@ -84,6 +84,7 @@ $accent3: #77797a;
 $blue: #54b2f1;
 $secondary: #ceeafd;
 $card: #0d629b17;
+$boton: #0070ba;
 
 html {
     /* 
@@ -118,6 +119,8 @@ html {
 
 td del {
   text-decoration: line-through;
+  text-decoration-color: red;
+  text-decoration-thickness: 2px;
 }
 
   .list_container {
@@ -154,6 +157,7 @@ td del {
         color: white;
         .crear{
           margin: 41rem;
+          
         }
        
         
@@ -198,9 +202,14 @@ td del {
     max-height: 300px; 
     overflow-y: auto;
     margin-top: 20px;
+    .left-align{
+      font-weight:bolder;
+      padding-block: 2rem;
+      text-align: center;
+
+     
+    }
     
-
-
   }
 
   table {
@@ -231,18 +240,23 @@ td del {
     .editar{
           background-color: transparent;
           font-weight: bolder;
-          color:$azul;
+          color:$verde;
       }
-    .button-delete {
-      background-color:  #ea1e1e;
-      color: white;
-      border-radius: 15px;
-      cursor: pointer;
-    }
+      .button-delete  {
+        background-color: rgb(212, 8, 8);
+        color: white;
+        border-radius: 25px;
+        width: 25px;
+        height: 25px;
+        text-align: center;
+        cursor: pointer;
+        margin-left: auto;
 
-    .button-delete:hover {
-      background-color: #54b2f1; /* Cambia el color de fondo al pasar el mouse sobre el botón "Eliminar" */
-    }
+      }
+      .button-delete:hover {
+        background-color: rgb(255, 0, 0);
+      }
+ 
   }
   
   .left-buttons button {

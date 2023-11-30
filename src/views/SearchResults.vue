@@ -107,7 +107,7 @@ $bg: rgba(6, 31, 14, 0.947);
 $azul-claro: #cfe0eb;
 $gris: #f7f7f7;
 $gris2: #364265;
-$verde: #00bd8e;
+$verde:  #4caf50;
 $azul: #0d629b;
 $blanco: #ffffff;
 $negro: #1a1320;
@@ -445,10 +445,11 @@ export default {
     };
   },
   methods: {
-    verOferta(flight) {//Botón de ber oferta del vuelo
-      // Lógica para ver la oferta del vuelo
-      console.log('Ver oferta para el vuelo:', flight);
-      // Puedes redirigir a una página de detalles de la oferta, por ejemplo.
+    verOferta(flight) {
+      console.log("Ver oferta para el vuelo:", flight);
+      sessionStorage.setItem("DetalleVuelo", JSON.stringify(flight));
+      // Realiza la redirección a la página de detalle de vuelo
+      this.$router.push({ name: 'DetalleVuelo'});
     },
     formatDate(dateString) {//Cambia el formato de la fecha de milisegundos a años, meses y dias 
       const options = { year: 'numeric', month: 'long', day: 'numeric' };

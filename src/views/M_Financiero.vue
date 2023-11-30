@@ -10,9 +10,9 @@
       </div>
     <br>
     <div class="container-agregar" v-if="showAddCard"> 
-      <h1 class="tittle">Agregar tarjeta</h1>
+      <h1 class="tittle">Agregar Tarjeta</h1>
       <div class="payment-options">
-        <p class="payment-label"><strong>Pagar con:</strong> </p>
+        <p class="payment-label"><strong >Pagar con:</strong> </p>
         <label @click="selectOption('credito')" :class="{ selected: selectedOption === 'credito' }">Tarjeta de crédito</label>
         <label @click="selectOption('debito')" :class="{ selected: selectedOption === 'debito' }">Tarjeta de débito</label>
       </div>
@@ -33,7 +33,7 @@
             <input type="number" placeholder="Saldo" v-model="balance" >
 
           </div>
-          <button class="button-confi" @click="addNewCard">Guardar tarjeta</button>
+          <button class="button-confi" @click="validateAndAddCard">Guardar tarjeta</button>
         </div>
       </div>
       <div v-if="selectedOption === 'debito'">
@@ -53,14 +53,14 @@
             <input type="number" placeholder="Saldo" v-model="balance">
           
           </div>
-          <button class="button-confi" @click="addNewCard">Guardar tarjeta</button>
+          <button class="button-confi" @click="validateAndAddCard">Guardar tarjeta</button>
          
         </div>
       </div>
    
     </div>
     <div  class="container" v-if="showUserListCard">
-      <h1>Tarjetas del Usuario</h1>
+      <h1 class="tittle"> Mis Tarjetas </h1>
       <div class="container-Lista">
         <div v-for="(card, index) in userCards" :key="index" class="card">
           <button class="button-delete" @click="removeCard(card.id)">X</button>
@@ -86,7 +86,7 @@
       
   </div>
   <success-modal :show-note="showSuccessMessage" :success-message="successMessage" @close="showSuccessMessage = false" />
- 
+  <error-modal :show-error="showErrorMessage" :error-message="errorMessage" @close="showErrorMessage = false" />
       <!------------------------------------------------FOOTER------------------------------------------->
     
   <Footer></Footer>
@@ -99,8 +99,7 @@ $bg: rgba(6, 31, 14, 0.873);
 $azul-claro: #cfe0eb;
 $gris: #f7f7f7;
 $gris2: #364265;
-$verde: rgb(0, 189, 142);
-$verde2:  #4caf50;
+$verde:  #4caf50;
 $blanco: #ffffff;
 $negro: #1a1320;
 $accent: #0b97f4;
@@ -110,7 +109,7 @@ $secondary: #ceeafd;
 $azul: #0d629b;
 $card: #0d629b17;
 $bodycol:#e6eff6;
-
+$boton: #0070ba;
 html {
   /* 
         Estilo CSS para la vista Home.vue del proyecto Vue.js. 
@@ -184,12 +183,16 @@ html {
 
     .payment-options {
         display: flex;
-        justify-content: space-between;
+       // justify-content: space-between;
         align-items: center; /* Alinear verticalmente los elementos al centro */
         margin-top: 10px;
+        font-size: 2rem;
+        padding-top: 2rem;
 
         .payment-label {
         text-align: center; /* Alinear el texto al centro horizontalmente */
+        
+        
         }
 
         label {
@@ -199,7 +202,7 @@ html {
         text-align: center; /* Alinear texto al centro */
         font-weight: bolder;
         &.selected {
-            color: #4b7ce7; /* Cambiar el color de texto cuando está seleccionado */
+            color: $verde; /* Cambiar el color de texto cuando está seleccionado */
         }
         }
     }
@@ -207,11 +210,20 @@ html {
     .tittle{
         text-align: center;
         font-size: 30px;
+        margin: 0;
+        color: $azul;
+        padding-top:2rem ;
+        padding-bottom: 2rem;
+        font-weight: bold;
+        font-size: 3rem; /* Aumenta el tamaño de la fuente */
+        letter-spacing: 1px; /* Aumenta el espaciado entre las letras */
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.456); /* Añade una sombra al texto */
+        font-family: "Arial", sans-serif; /* Cambia la fuente (opcional) */
     }
   
     .paypal-details {
       margin-top: 20px;
-  
+      
       input {
         /*border: 1px solid #0070ba; 
         padding: 10px;
@@ -277,7 +289,7 @@ html {
   justify-content: space-around;
 
   .button-edit {
-    background-color: $verde2; /* Color verde */
+    background-color: $verde; /* Color verde */
     color: white;
     border-radius: 5px;
     padding: 8px 16px;
@@ -345,6 +357,8 @@ import successModal from "@/components/successModal.vue";
         token: window.sessionStorage.getItem("JWTtoken"),
         successMessage: "",
         showSuccessMessage: false,
+        errorMessage: "",
+        showErrorMessage: false,
         userCards: [], // Arreglo para almacenar las tarjetas del usuario
         userID: '',
         balance: '',
@@ -416,9 +430,64 @@ import successModal from "@/components/successModal.vue";
           this.userCards = response.data; // Suponiendo que el servicio devuelve un arreglo de tarjetas
         } catch (error) {
           console.error('Error al obtener las tarjetas:', error.message);
+          this.errorMessage = "Error al obtener las tarjetas";
+          this.showErrorMessage = true;
           // Manejo de errores
         }
       },
+      validateAndAddCard() {
+        // Validar los campos antes de agregar la tarjeta
+        if (!this.cardholderName || !this.creditCardNumber || !this.expirationMonth || !this.expirationYear || !this.cvc || !this.balance) {
+          this.errorMessage = "Por favor, complete todos los campos.";
+          this.showErrorMessage = true;
+          return;
+        }
+
+        // Realizar validaciones específicas según tus requisitos
+        if (this.creditCardNumber.toString().length !== 16  || isNaN(this.creditCardNumber)) {
+          this.errorMessage = "El número de tarjeta de crédito debe contener 16 dígitos y ser numérico.";
+          this.showErrorMessage = true;
+          return;
+        }
+
+        if (this.cvc.toString().length !== 3 || isNaN(this.cvc)) {
+          this.errorMessage = "El código CVC debe contener 3 dígitos y ser numérico.";
+          this.showErrorMessage = true;
+          return;
+        }
+        const currentYear = new Date().getFullYear(); // Obtiene el año actual
+        const enteredYear = parseInt(this.expirationYear) ;
+
+        let currentYearLastTwoDigits = parseInt(currentYear.toString().slice(-2));
+
+        if (
+          enteredYear.toString().length !== 2 ||
+          enteredYear < currentYearLastTwoDigits ||
+          enteredYear > currentYearLastTwoDigits + 6 // Rango de fecha de expiración de tarjeta 2023+ 6. Se puede ajustar el rango si es necesario
+        ) {
+          console.log('current:', currentYearLastTwoDigits); 
+          console.log('ingresado año:', enteredYear); 
+          this.errorMessage = "Ingrese un año de expiración válido y en el futuro.";
+          this.showErrorMessage = true;
+          this.expirationYear = ''; // Borra el campo si el año no es válido
+          return;
+        }
+        if (!/^[a-zA-Z\s]*$/.test(this.cardholderName)) {
+          this.errorMessage = "El nombre del titular de la tarjeta solo debe contener letras.";
+          this.showErrorMessage = true;
+          return;
+        }
+        if (this.cardholderName.trim() === '') {
+          this.errorMessage = "El nombre del titular de la tarjeta no puede ser solo espacios en blanco.";
+          this.showErrorMessage = true;
+          return;
+        }
+        // Puedes agregar más validaciones según tus requisitos
+
+        // Si todas las validaciones pasan, llama al método addNewCard
+        this.addNewCard();
+      },
+   
       addNewCard() {
         const token = window.sessionStorage.getItem("JWTtoken");//Obtener el token 
             if (token && token != null) {
@@ -472,15 +541,6 @@ import successModal from "@/components/successModal.vue";
         } catch (error) {
           console.error('Error al actualizar el saldo:', error.message);
           // Manejo de errores
-        }
-      },
-
-
-      validateTitularName() {
-        // Verificar si el nombre del titular solo contiene espacios en blanco
-        if (/^\s+$/.test(this.titularName)) {
-          // Si solo contiene espacios, borra el contenido del campo
-          this.titularName = '';
         }
       },
       selectOption(option) {

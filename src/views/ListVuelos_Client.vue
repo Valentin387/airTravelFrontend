@@ -67,7 +67,7 @@ $bg: rgba(6, 31, 14, 0.873);
 $azul-claro: #cfe0eb;
 $gris: #f7f7f7;
 $gris2: #364265;
-$verde: #00bd8e;
+$verde:  #4caf50;
 $azul: #0d629b;
 $blanco: #ffffff;
 $negro: #1a1320;
@@ -370,7 +370,6 @@ export default {
     };
   },
   mounted() {
-    console.log("Hello");
     // Carga los vuelos almacenados en el almacenamiento de la sesión
     const storedResults = sessionStorage.getItem("ListVuelosClient");
     console.log("Stored Results:", storedResults);
