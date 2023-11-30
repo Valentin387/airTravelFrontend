@@ -383,7 +383,7 @@ $bg: rgba(6, 31, 14, 0.873);
 $azul-claro: #cfe0eb;
 $gris: #f7f7f7;
 $gris2: #364265;
-$verde: #00bd8e;
+$verde:  #4caf50;
 $azul: #0d629b;
 $blanco: #ffffff;
 $negro: #1a1320;
@@ -392,6 +392,7 @@ $accent3: #77797a;
 $blue: #54b2f1;
 $secondary: #ceeafd;
 $card: #0d629b17;
+$bodycol:#e6eff6;
 
 @mixin grid($val) {
   display: grid;
@@ -431,7 +432,7 @@ html {
 
 body {
   //FONDO DE LA PAGINA
-  background:#e6eff6;
+  background: $bodycol;
   //background-image: linear-gradient(to top, #fcfeff 0%, #fbfeff 100%);
 
   overflow-x: hidden;
@@ -852,9 +853,9 @@ export default {
   data() {
     return {
       searchParams: {
-        origin: "",
-        destination: "",
-        flightDate: "",
+        origin: "Pereira",
+        destination: "New York",
+        flightDate: '2024-01-20',
         numPassengers: 1,
       },
    

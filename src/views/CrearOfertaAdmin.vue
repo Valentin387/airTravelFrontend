@@ -34,12 +34,15 @@
                             <option value="Cali">Cali</option>
                             <option value="Cartagena">Cartagena</option>
                         </select>
-
+                        <div></div>
+                        <span for="discount"><strong> Descuento:</strong> </span>
                         <input type="number" id="discount" placeholder="Descuento (%)" v-model="discount" required />
-
+                        <span class="simbolo"><strong> %</strong></span>
+                        <div></div>
+                        <span class="expiration-date"><strong>Fecha de vencimiento de la promoción </strong></span>
                         <input type="date" id="validDateRange" placeholder="Fecha de Vencimiento de Promociòn"
                             v-model="validDateRange" required />
-                        <p class="expiration-date">Fecha de vencimiento de la promoción</p>
+                      
 
                         <textarea type="text" id="description" placeholder="Descripción de la Oferta" v-model="description"
                             required></textarea>
@@ -115,6 +118,14 @@ html {
 .form-group {
     /* ... otros estilos ... */
     text-align: center;
+    input#discount {
+        width: 53%; /* Reducir el ancho del input */
+        
+    }
+    .simbolo span {
+        font-weight: bolder;
+        font-size: 2rem;
+    }
 }
 
 .registration-box {

@@ -46,7 +46,8 @@
                  </p>
                  </div>
                  <div class="flight-price">
-                 <p class="price">${{ flight.costByPerson }}</p>
+                  <p class="price" :class="{ 'strike-through': flight.costByPersonOffer > 0 }">${{ flight.costByPerson }}</p>
+                  <p class="price" v-if="flight.costByPersonOffer > 0"><span style="color:#0d629b;"><strong>Oferta:</strong></span> ${{ flight.costByPersonOffer }}</p>
                  <button @click="verOferta(flight)">Ver Oferta</button>
                  </div>
              </div>
@@ -66,7 +67,7 @@ $bg: rgba(6, 31, 14, 0.873);
 $azul-claro: #cfe0eb;
 $gris: #f7f7f7;
 $gris2: #364265;
-$verde: #00bd8e;
+$verde:  #4caf50;
 $azul: #0d629b;
 $blanco: #ffffff;
 $negro: #1a1320;
@@ -105,7 +106,10 @@ html {
    background-color: $azul;
  }
 }
-
+.strike-through {
+  text-decoration: line-through;
+  text-decoration-color: red; 
+}
 
 .contenedores {
  background-color: $card; /* Cambia este color según tus necesidades */
@@ -366,7 +370,6 @@ export default {
     };
   },
   mounted() {
-    console.log("Hello");
     // Carga los vuelos almacenados en el almacenamiento de la sesión
     const storedResults = sessionStorage.getItem("ListVuelosClient");
     console.log("Stored Results:", storedResults);

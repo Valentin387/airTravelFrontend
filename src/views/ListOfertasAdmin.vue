@@ -474,62 +474,44 @@ export default {
 
         },
         performOfferSearch() {
-            console.log('SearchParams:', this.searchParams);
-            console.log('All Offers:', this.offers);
+            const { origin, destination, validDateRange } = this.searchParams;
 
-
-            // Filtra las ofertas de acuerdo a los parámetros de búsqueda ingresados
             this.filteredOffers = this.offers.filter(offer => {
-                // Verifica si se ha proporcionado al menos un criterio de búsqueda
                 const offerDate = new Date(offer.validDateRange);
                 const year = offerDate.getFullYear();
-                const month = (offerDate.getMonth() + 1).toString().padStart(2, '0'); // Agrega 1 al mes porque en JavaScript los meses van de 0 a 11
+                const month = (offerDate.getMonth() + 1).toString().padStart(2, '0');
                 const day = offerDate.getDate().toString().padStart(2, '0');
-
                 const formattedDate = `${year}-${month}-${day}`;
 
-                const hasOrigin = this.searchParams.origin !== '';
-                const hasDestination = this.searchParams.destination !== '';
-                const hasvalidDateRange = formattedDate !== '';
-                // Realiza la búsqueda en función de los criterios proporcionados
+                const hasOrigin = origin !== '';
+                const hasDestination = destination !== '';
+                const hasValidDateRange = validDateRange !== '';
 
-                if (!hasOrigin && !hasDestination && !hasvalidDateRange) {
-                    this.filteredOffers = this.offers;
-                    return true;
+                // Verifica si se ha proporcionado al menos un criterio de búsqueda
+                const hasAnyCriteria = hasOrigin || hasDestination || hasValidDateRange;
+
+                // Filtra las ofertas según los criterios proporcionados
+                if (hasAnyCriteria) {
+                    if (hasOrigin && offer.origin !== origin) {
+                        return false; // No coincide con el origen
+                    }
+
+                    if (hasDestination && offer.destination !== destination) {
+                        return false; // No coincide con el destino
+                    }
+
+                    if (hasValidDateRange && formattedDate !== validDateRange) {
+                        return false; // No coincide con la fecha de vencimiento
+                    }
+
+                    return true; // Coincide con todos los criterios proporcionados
                 }
-                if (hasOrigin && hasDestination && hasvalidDateRange) {//ORIGEN DESTINO Y FECHA
-                    return (
-                        offer.origin === this.searchParams.origin &&
-                        offer.destination === this.searchParams.destination &&
-                        formattedDate === this.searchParams.validDateRange
-                    );
-                }
-                else if (hasOrigin) {//ORIGEN
-                    return offer.origin === this.searchParams.origin;
-                }
-                else if (hasDestination) {//DESTINO
-                    return offer.destination === this.searchParams.destination;
-                }
-                else if (hasDestination && hasvalidDateRange) {//DESTINO Y FECHA
-                    return offer.destination === this.searchParams.destination &&
-                        formattedDate === this.searchParams.validDateRange
-                }
-                else if (hasOrigin && hasvalidDateRange) {///ORIGEN FECHA
-                    return offer.origin === this.searchParams.origin &&
-                        formattedDate === this.searchParams.validDateRange
-                }
-                else if (hasvalidDateRange) {//FEcHA 
-                    return formattedDate === this.searchParams.validDateRange;
-                }
-                else if (hasOrigin && hasDestination) {//ORIGEN DESTINO
-                    return offer.origin === this.searchParams.origin &&
-                        offer.destination === this.searchParams.destination
-                }
+
+                // No se proporcionó ningún criterio, se muestran todas las ofertas
                 return true;
-
-
             });
         },
+
         cancelPromotion(offer) {
             const confirmation = window.confirm('¿Estás seguro de cancelar esta promoción?');
 

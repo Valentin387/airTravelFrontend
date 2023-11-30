@@ -27,6 +27,8 @@ import Purchase from '../views/Purchase.vue'
 import PromocionesUsuario from '../views/PromocionesUsuario.vue'
 
 import Checkin from '../views/Check-in.vue'
+
+import EditarVuelo from '../views/EditarVuelo.vue'
 const router = createRouter ({
 
     history: createWebHistory(),
@@ -168,6 +170,12 @@ const router = createRouter ({
             path: '/Checkin',
             name: 'Checkin',
             component: Checkin
+        },
+        {
+            path: '/EditarVuelo',
+            name: 'EditarVuelo',
+            component: EditarVuelo,
+            meta: { requiresAuth: true }
         },
     ]
     

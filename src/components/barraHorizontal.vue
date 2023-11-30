@@ -11,10 +11,10 @@
                 <nav class="navbar">
                     <!-- LINKS DE NAVEGACIÓN -->
                     <a data-aos="zoom-in-left" data-aos-delay="300" @click="redirectToPaginaPrincipal" >Inicio</a>
-                    <a data-aos="zoom-in-left" data-aos-delay="450" @click="redirectToCheckIn">Confirmar Check-in</a>
+                    <a data-aos="zoom-in-left" data-aos-delay="450" @click="redirectToCheckIn"  v-if="userRole !== 1 && userRole !== 2">Confirmar Check-in</a>
                     <a data-aos="zoom-in-left" data-aos-delay="600" @click="redirectToAyuda">ayuda</a>
                 </nav>
-                <a data-aos="zoom-in-left" data-aos-delay="600" @click="redirectToCarrito" class="carrito" id="carrito">
+                <a data-aos="zoom-in-left" data-aos-delay="600" @click="redirectToCarrito" class="carrito" id="carrito" v-if="userRole === 3 ">
                     <i class="material-symbols-outlined">shopping_cart</i>
                 </a>
 
@@ -47,9 +47,9 @@
                         <!-- Cliente -->
                         <li><a href="/Perfil">Perfil</a></li>
                         <li><a href="/M_Financiero">Módulo Financiero</a></li>
-                        <li><a href="#">Mis Compras</a></li>
-                        <li><a href="/List_Reservas">Mis Reservas</a></li>
-                        <li v-if="profile.subscribedToFeed === 1"><a href="/">Noticias</a></li>
+                        <li><a href="/Checkin">Check-in</a></li>
+                        <li><a href="/List_Reservas">Reservas</a></li>
+                        <li v-if=" SuscritoNoticias === 1"><a href="/PromocionesUsuario">Noticias</a></li>
                         <li> <div class="btn-cerrar" @click="logout">
                                 <span class="material-symbols-outlined">logout</span>Cerrar sesión
                             </div></li>
@@ -76,7 +76,8 @@
 }
 
 $blue: #54b2f1;
-$verde: #00bd8e;
+
+$verde:  #4caf50;
 $border: 0.2rem solid $blue;
 $gris: #f7f7f7;
 $azul: #0d629b;
@@ -331,6 +332,7 @@ export default {
             token: window.sessionStorage.getItem("JWTtoken"),
             isMenuUsuarioActive: false,
             userRole: null, // Almacena el rol del usuario
+            SuscritoNoticias:null,
             profile: {
                 id: "",
                 email: "",
@@ -350,7 +352,7 @@ export default {
             },
         };
     },
-    created() {
+    mounted() {
 
         this.getUserRole(); // Llama a la función para obtener el rol del usuario
 
@@ -361,6 +363,7 @@ export default {
             const token = window.sessionStorage.getItem("JWTtoken");
             if (token && token != null) {
                 this.isMenuUsuarioActive = !this.isMenuUsuarioActive;
+                this.getUserRole(); // Llama a la función para obtener el rol del usuario
             } else {
                
                 this.redirectToLogin();
@@ -368,7 +371,8 @@ export default {
         },
         redirectToLogin() {
             this.$router.push("/Login"); // Redirige a la página de inicio de sesión
-            this.userRole=null;
+            
+    
         },
         getUserRole() {
             const token = window.sessionStorage.getItem("JWTtoken");
@@ -384,7 +388,9 @@ export default {
                 if (tokenData.role == "registeredUser") {
                     this.userRole = 3;
                 }
+              
             }
+            
 
         },
 
@@ -407,25 +413,27 @@ export default {
 
         logout(){
             this.isMenuUsuarioActive = false; // Cierra el menú desplegable del usuario
+            this.userRole=null;
+            // Limpiar sessionStorage
+            window.sessionStorage.clear();
             logoutService.logout().then((response) => {
-          // Maneja la respuesta exitosa aquí
+
+            // Maneja la respuesta exitosa aquí
+                if (response.status === 200) {
+                    console.log("logout exitoso", response.data);
+                }
+            })
+            .catch((error) => {
+                console.error("Something happened:", error);
+                this.errorMessage = error.response.data.message || "Something happened, try to logout and login again please";
+                this.showErrorMessage = true;
+            }
+            );
+            // Remove the JWT token from the localStorage
+            window.sessionStorage.removeItem("JWTtoken");
+            this.$router.push("/Login");
          
-          if (response.status === 200) {
-            console.log("logout exitoso", response.data);
-       
-            // Redirige al usuario o realiza otras acciones según tus necesidades
-          }
-        })
-        .catch((error) => {
-            console.error("Something happened:", error);
-            this.errorMessage = error.response.data.message || "Something happened, try to logout and login again please";
-            this.showErrorMessage = true;
-          }
-        );
-        // Remove the JWT token from the localStorage
-        window.sessionStorage.removeItem("JWTtoken");
-        this.$router.push("/Login");
-    },
+        },
 
     },
 };

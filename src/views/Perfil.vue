@@ -667,29 +667,6 @@ export default {
             this.$router.push('/CambioIdRoot');
         },
 
-        logout() {
-            this.showSpinner = true;
-            logoutService.logout().then((response) => {
-                this.showSpinner = false;
-                // Maneja la respuesta exitosa aquí
-                if (response.status === 200) {
-                    console.log("logout exitoso", response.data);
-                    // Redirige al usuario o realiza otras acciones según tus necesidades
-                }
-            })
-                .catch((error) => {
-                    this.showSpinner = false;
-                    console.error("Something happened:", error);
-                    this.errorMessage = error.response.data.message || "Something happened";
-                    this.showErrorMessage = true;
-                }
-                );
-            // Remove the JWT token from the localStorage
-            window.sessionStorage.removeItem("JWTtoken");
-            this.$router.push("/Login");
-        },
-
-
         toggleEdit(field) {
             this.isEditing[field] = !this.isEditing[field];
             if (this.isEditing[field]) {
