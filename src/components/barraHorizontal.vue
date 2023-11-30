@@ -154,6 +154,72 @@ $secondary: #a7d6f6;
             font-size: 3rem; //Tamaño del icono de carrito y usuario
         }
     }
+
+
+    .menuUsuario.active {
+        visibility: visible;
+        opacity: 1;
+    }
+    
+    .menuUsuario {
+        position: absolute;
+        top: 100%;
+        /* Coloca el menú justo debajo del ícono del usuario */
+        right: 0;
+        background-color: $blanco;
+        /* Color de fondo del menú del usuario */
+        border-radius: 15px;
+        width: 200px;
+        box-sizing: border-box;
+        /* Corrige la propiedad box-sizing */
+        visibility: hidden;
+        opacity: 0;
+        transition: visibility 0s, opacity 0.5s linear;
+        /* Transición para la visibilidad y opacidad */
+        align-items: center;
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+
+            li {
+                padding: 10px;
+                display: flex;
+                align-items: center;
+
+                a {
+                    text-decoration: none;
+                    color: $azul;
+                    background-color: transparent;
+                    font-weight: 500;
+                    transition: color 0.3s;
+                    /* Transición para el cambio de color */
+
+                    &:hover {
+                        color: $verde;
+                        /* Cambio de color al pasar el mouse */
+                    }
+                }
+
+                .btn-cerrar {
+                    text-decoration: none;
+                    color: $azul;
+                    margin-right:0.5rem ;
+                    background-color: transparent;
+                    font-weight: 500;
+                    transition: color 0.3s;
+                    /* Transición para el cambio de color */
+
+                    &:hover {
+                        color: $verde;
+                        /* Cambio de color al pasar el mouse */
+                    }
+                }
+            }
+        }
+    }
+
 }
 
 //LOGO----------------------------------------------------------------
@@ -257,69 +323,7 @@ $secondary: #a7d6f6;
     }
 }
 
-.menuUsuario {
-    position: absolute;
-    top: 100%;
-    /* Coloca el menú justo debajo del ícono del usuario */
-    right: 0;
-    background-color: $blanco;
-    /* Color de fondo del menú del usuario */
-    border-radius: 15px;
-    width: 200px;
-    box-sizing: border-box;
-    /* Corrige la propiedad box-sizing */
-    visibility: hidden;
-    opacity: 0;
-    transition: visibility 0s, opacity 0.5s linear;
-    /* Transición para la visibilidad y opacidad */
-    align-items: center;
 
-    ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-
-        li {
-            padding: 10px;
-            display: flex;
-            align-items: center;
-
-            a {
-                text-decoration: none;
-                color: $azul;
-                background-color: transparent;
-                font-weight: 500;
-                transition: color 0.3s;
-                /* Transición para el cambio de color */
-
-                &:hover {
-                    color: $verde;
-                    /* Cambio de color al pasar el mouse */
-                }
-            }
-
-            .btn-cerrar {
-                text-decoration: none;
-                color: $azul;
-                margin-right:0.5rem ;
-                background-color: transparent;
-                font-weight: 500;
-                transition: color 0.3s;
-                /* Transición para el cambio de color */
-
-                &:hover {
-                    color: $verde;
-                    /* Cambio de color al pasar el mouse */
-                }
-            }
-        }
-    }
-}
-
-.menuUsuario.active {
-    visibility: visible;
-    opacity: 1;
-}
 </style>
 
 <script>
@@ -361,18 +365,15 @@ export default {
     methods: {
         handleUserIconClick() {
             const token = window.sessionStorage.getItem("JWTtoken");
-            if (token && token != null) {
+            if (token && token !== null) {
                 this.isMenuUsuarioActive = !this.isMenuUsuarioActive;
                 this.getUserRole(); // Llama a la función para obtener el rol del usuario
             } else {
-               
                 this.redirectToLogin();
             }
         },
         redirectToLogin() {
             this.$router.push("/Login"); // Redirige a la página de inicio de sesión
-            
-    
         },
         getUserRole() {
             const token = window.sessionStorage.getItem("JWTtoken");

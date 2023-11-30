@@ -187,6 +187,7 @@ export default {
      
       cartItems: [],
       total: 0, // You may need to initialize this based on your requirements
+      showSpinner: false,
     };
   },
   components: {
@@ -206,13 +207,16 @@ export default {
   methods: {
     
     async getTotal(){
+      this.showSpinner = true;
       const token = window.sessionStorage.getItem('JWTtoken');
       const tokenData = JSON.parse(atob(token.split('.')[1]));
       const userID = tokenData.ID;
 
       // Llamar al servicio para obtener los items
       checkoutService.checkoutShoppingCart({"userID" : userID})
+      
           .then(response => {
+            this.showSpinner = false;
             if (response.status == 200){
               this.total = response.data.totalAmount;
               window.sessionStorage.setItem('total', JSON.stringify(this.total));
@@ -220,12 +224,14 @@ export default {
             }
           })
           .catch(error => {
+            this.showSpinner = false;
             console.error(error);
           });
     },
 
 
     async listItems() {
+      this.showSpinner = true;
       const token = window.sessionStorage.getItem('JWTtoken');
       const tokenData = JSON.parse(atob(token.split('.')[1]));
       const userID = tokenData.ID;
@@ -233,6 +239,7 @@ export default {
       // Llamar al servicio para obtener los items
       listService.listShoppingCartItems({"userID" : userID})
           .then(response => {
+            this.showSpinner = false;
             if (response.status == 200){
               this.cartItems = response.data;
               window.sessionStorage.setItem('cartItems', JSON.stringify(this.cartItems));
@@ -241,12 +248,14 @@ export default {
 
           })
           .catch(error => {
+            this.showSpinner = false;
             console.error(error);
           });
     },
     
 
     async purchase(){
+      this.showSpinner = true;
       //push to /Purchase
       this.$router.push("/Purchase");
     },
