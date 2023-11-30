@@ -10,7 +10,6 @@
             <div class="box">
                 <h3>Links</h3>
                 <a href="/" class="links"><i class="material-symbols-outlined">chevron_right</i>Inicio</a>
-                <a href="/Check-In" class="links"><i class="material-symbols-outlined">chevron_right</i>Confirmar Check-in</a>
                 <a href="/Ayuda" class="links"><i class="material-symbols-outlined">chevron_right</i>Ayuda</a>
                     <a href="/Contactanos" class="links"><i class="material-symbols-outlined">chevron_right</i> contáctanos</a>
 

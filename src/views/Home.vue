@@ -853,9 +853,9 @@ export default {
   data() {
     return {
       searchParams: {
-        origin: "Pereira",
-        destination: "New York",
-        flightDate: '2024-01-20',
+        origin: "Medellín",
+        destination: "Cartagena",
+        flightDate: '2023-11-30',
         numPassengers: 1,
       },
    

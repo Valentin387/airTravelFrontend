@@ -31,9 +31,15 @@
               <td>
                 <button class="button-delete" @click="removeItem(index)">X</button>
               </td>
+              <td>
+                <button class="button-edit" @click="editItem(index)">
+                  <span class="material-symbols-outlined">edit</span>
+                </button>
+              </td>
             </tr>
         </tbody>
         </table>
+        
       </div>
       <div class="cart-total">
         <p><strong>Total:  </strong> $ {{ Math.round(total * 100) / 100 }}</p>
@@ -92,13 +98,13 @@ html {
 
 }
     .cart-container {
-    padding: 20px;
-    border-radius: 5px;
-    height: 85vh;
-    width: 90vw;
-    margin: 0 auto; /* Centrar horizontalmente */
-    margin-top: 10rem; /* Centrar verticalmente */
-    background-color: $secondary;
+      padding: 20px;
+      border-radius: 5px;
+      height: auto;
+      width: 90vw;
+      margin: 0 auto; /* Centrar horizontalmente */
+      margin-top: 10rem; /* Centrar verticalmente */
+      background-color: $secondary;
     }
     .strike-through {
       text-decoration: line-through;
@@ -111,6 +117,23 @@ html {
     .cart-items {
     background-color: #f2f2f283;
     padding: 10px;
+
+    .button-edit {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+    }
+    .cart-items table {
+      width: 100%;
+      overflow-x: auto; // Agregar desplazamiento horizontal en pantallas pequeñas
+      white-space: nowrap; // Evitar que los elementos se envuelvan en pantallas pequeñas
+    }
+
+    .button-edit span {
+      background-color: transparent; // Establecer el fondo del icono como transparente
+      color: $azul; // Color del ícono si es necesario
+      font-size: 2.6rem; // Tamaño del ícono
+    }
     }
     .left-align {
       font-weight: bolder;
@@ -167,6 +190,13 @@ html {
     border-radius: 5px;
     cursor: pointer;
     }
+    // Media query para tamaños de pantalla más pequeños (ajusta según tus necesidades)
+    @media (max-width: 768px) {
+      .cart-items table {
+        // Estilos específicos para tamaños de pantalla más pequeños
+        font-size: 12px; // Tamaño de fuente más pequeño para adaptarse al espacio
+      }
+    }
 </style>
 
 <script>
@@ -178,7 +208,7 @@ import successModal from "@/components/successModal.vue";
 import listService from "@/services/shoppingCartServices/listService.js";
 import checkoutService from "@/services/shoppingCartServices/checkoutService.js";
 import dropService from "@/services/shoppingCartServices/dropService.js";
-import modifyService from "@/services/shoppingCartServices/modifyItemService.js";
+
 import { roundToNearestMinutes } from "date-fns";
 
 export default {
@@ -261,42 +291,34 @@ export default {
     },
 
     removeItem(index) {
-      //use the service
-      const token = window.sessionStorage.getItem('JWTtoken');
-      const tokenData = JSON.parse(atob(token.split('.')[1]));
-      const userID = tokenData.ID;
-
-      dropService.dropItem({"userID" : userID, "flightID" :this.cartItems[index].flightId})
-          .then(response => {
-            if (response.status == 200){
-              console.log(response.data);
-            }
-          })
-          .catch(error => {
-            console.error(error);
-          });
-
-          listItems();
-          getTotal();
-    },
-    /*
-    updateSeatQuantity(item) {
-      // use the service
-      const token = window.sessionStorage.getItem('JWTtoken');
-      const tokenData = JSON.parse(atob(token.split('.')[1]));
-      const userID = tokenData.ID;
+      const shouldDelete = window.confirm('¿Estás seguro de que deseas eliminar este elemento del carrito?');
       
-      modifyService.modifyItemInCart(userID, flightID, seatQuantity, seatClass)
+      if (shouldDelete) {
+        const token = window.sessionStorage.getItem('JWTtoken');
+        const tokenData = JSON.parse(atob(token.split('.')[1]));
+        const userID = tokenData.ID;
+
+        dropService.dropItem({"userID" : userID, "flightID" : this.cartItems[index].flightId})
           .then(response => {
             if (response.status == 200){
               console.log(response.data);
+              // Eliminar el elemento del carrito después de confirmar la eliminación
+              this.cartItems.splice(index, 1);
+              // Volver a calcular el total y la lista de elementos después de eliminar
+              this.listItems();
+              this.getTotal();
             }
           })
           .catch(error => {
             console.error(error);
           });
+      } else {
+        // Si el usuario cancela la eliminación, no se hace nada
+        console.log('Eliminación cancelada');
+      }
     },
-    */
+
+    
 
     formatDate(dateString) {
      //Cambia el formato de la fecha de milisegundos a años, meses y dias
@@ -304,6 +326,15 @@ export default {
      const date = new Date(dateString);
      return date.toLocaleDateString("es-ES", options);
    },
+
+   editItem(index) {
+      sessionStorage.setItem('flightToEdit', JSON.stringify(this.cartItems[index]));
+      sessionStorage.setItem('flightToEditIndex', index);
+      // Redirigir a la vista EditarCarrito
+      this.$router.push('/EditarCarrito');
+    },
+
+
 
   },
 };

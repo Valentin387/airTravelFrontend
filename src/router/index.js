@@ -29,6 +29,7 @@ import PromocionesUsuario from '../views/PromocionesUsuario.vue'
 import Checkin from '../views/Check-in.vue'
 
 import EditarVuelo from '../views/EditarVuelo.vue'
+import EditarCarrito from '../views/EditarCarrito.vue'
 const router = createRouter ({
 
     history: createWebHistory(),
@@ -177,7 +178,14 @@ const router = createRouter ({
             component: EditarVuelo,
             meta: { requiresAuth: true }
         },
+        {
+            path: '/EditarCarrito',
+            name: 'EditarCarrito',
+            component: EditarCarrito,
+            meta: { requiresAuth: true }
+        },
     ]
+    
     
 })
 

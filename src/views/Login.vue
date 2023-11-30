@@ -167,6 +167,7 @@ html {
 
   .login-container {
     width: 50%;
+    height: auto;
     display: flex;
     flex-direction: column;
     align-items: center;

@@ -1,5 +1,6 @@
 <template>
     <div class="payment-module">
+      <spinner :showSpinner="showSpinner"></spinner>
       <div class="menu">
         <nav>
           <ul>
@@ -515,12 +516,13 @@ import successModal from "@/components/successModal.vue";
             console.log('Tarjeta agregada:', response);
             this.successMessage = "¡Tarjeta agregada con éxito!";
             this.showSuccessMessage = true;
-            this.showSpinner = true;
+            this.showSpinner = false;
             window.location.reload();
 
           })
           .catch(error => {
             console.error('Error al agregar la tarjeta:', error.message);
+            this.showSpinner = false;
             // Manejo de errores
           });
       },
