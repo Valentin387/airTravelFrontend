@@ -655,7 +655,7 @@ export default {
                 this.errorMessage = error.response.data.message || "Error en el fetching, por favor cierre sesión y vuelva a iniciarla";
                 this.showErrorMessage = true;
             });
-    },
+        },
     methods: {
         redirectToAdminManagement() {
             this.$router.push('/Ad_Management');

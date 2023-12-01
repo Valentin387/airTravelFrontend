@@ -45,12 +45,11 @@
                 </div>
 
                 <input type="submit" value="Buscar" class="btn_buscar" /><!--Botón de busqueda de vuelo -->
-                <form action="/CrearOfertasAdmin" method="get">
-                    <button type="submit" class="btn_buscar">Crear Oferta</button>
-                </form>
+              
 
             </form>
         </section> <!--Finaliza aquí la barra de búsqueda -->
+        <h1 class="tittle">Promociones</h1>
 
         <div class="contenedores">
             <div v-if="filteredOffers && filteredOffers.length > 0">
@@ -74,7 +73,7 @@
                             <p class="price"><strong>Descuento:</strong> <strong style="color: rgb(14, 14, 15);">{{
                                 offer.discount }}%</strong></p>
                             <!-- Botón "Ver Oferta" -->
-                            <button @click="cancelPromotion(offer)">Cancelar promoción</button>
+                            <button @click="verOferta(offer[index])">Ver Oferta</button>
                         </div>
                     </div>
                 </div>
@@ -95,7 +94,7 @@ $bg: rgba(6, 31, 14, 0.947);
 $azul-claro: #cfe0eb;
 $gris: #f7f7f7;
 $gris2: #364265;
-$verde: #00bd8e;
+$verde:  #4caf50;
 $azul: #0d629b;
 $blanco: #ffffff;
 $negro: #1a1320;
@@ -210,6 +209,15 @@ html {
 }
 
 //-------------------------
+.tittle{
+    margin: 0;
+    color: $azul;
+    font-weight: bold;
+    font-size: 3rem; /* Aumenta el tamaño de la fuente */
+    letter-spacing: 1px; /* Aumenta el espaciado entre las letras */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.456); /* Añade una sombra al texto */
+    font-family: "Arial", sans-serif; /* Cambia la fuente (opcional) */
+}
 
 .contenedores {
     //position: relative;
@@ -423,7 +431,8 @@ html {
 }
 </style>
 <script>
-import flightService from "@/services/offerService/listOfferService.js";
+import flightServiceOffer from "@/services/offerService/listOfferService.js";
+import flightService from "@/services/searchService/parametrizedSearchService.js";
 import deleteService from "@/services/offerService/deleteOfferService.js";
 import Footer from "@/components/footer.vue";
 import errorModal from "@/components/errorModal.vue";
@@ -460,7 +469,7 @@ export default {
         fetchOffers() {
             // Llama al servicio para obtener todas las ofertas
 
-            flightService.getOffers()
+            flightServiceOffer.getOffers()
                 .then(response => {
                     if (response.status === 200) {
                         this.offers = response.data;
@@ -533,7 +542,29 @@ export default {
             } else {
                 // Acción en caso de cancelar la eliminación (puede ser dejarlo vacío o mostrar un mensaje)
             }
-        }
+        },
+        verOferta(offer) {
+            flightService
+            .parametrizedSearch( offer.origin, offer.destination, offer.validDateRange)
+            .then((response) => {
+            console.log(response.status);
+            if (response.status === 200) {
+                console.log("Vuelos encontrados:", response.data);
+
+                // Almacena los vuelos en el almacenamiento de la sesión
+                sessionStorage.setItem(
+                "searchResults",
+                JSON.stringify(response.data)
+                );
+
+                // Redirige a la nueva vista
+                this.$router.push({ name: "SearchResults" });
+            }
+            })
+            .catch((error) => {
+            console.error("Error en la búsqueda de vuelos:", error);
+            });
+        },
 
         // Otros métodos necesarios
         // ... offer.validDateRange === this.searchParams.validDateRange

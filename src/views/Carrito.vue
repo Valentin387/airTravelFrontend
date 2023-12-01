@@ -18,7 +18,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in cartItems" :key="index">
+           <tr v-for="(item, index) in cartItems" :key="index">
               <td class="left">{{ item.flightId }}</td>
               <td class="left">{{ item.origin }}</td>
               <td class="left">{{ item.destination }}</td>
@@ -27,16 +27,39 @@
               <td class="left" :class="{ 'strike-through': item.costByPersonOffer > 0 }">${{ item.costByPerson }}</td>
               <td class="left">${{ item.costByPersonOffer }}</td>
   
-              
+            
               <td>
                 <button class="button-delete" @click="removeItem(index)">X</button>
               </td>
+            
               <td>
-                <button class="button-edit" @click="editItem(index)">
+                <button class="button-edit" @click="toggleEdit(index)">
                   <span class="material-symbols-outlined">edit</span>
                 </button>
+                
+                <div v-if="editingIndex === index">
+                  <label for="seatQuantity">Cantidad de Asientos:</label>
+                  <select v-model="seatQuantity" id="seatQuantity">
+                    <option value= "1">1 </option>
+                    <option value= "2">2 </option>
+                    <option value= "3">3 </option>
+                    <option value= "4" >4 </option>
+                    <option value= "5" >5 </option> 
+                  </select>
+                  <br>
+                  <label for="seatClass">Clase:</label>
+                  <br>
+                  <select v-model="seatClass" id="seatClass">
+                    <option value="Economic Class">Económica</option>
+                    <option value="First Class">Primera Clase</option>
+                  </select>
+                  <br>
+                  <button class="guardar" @click="editItem(index)">Guardar</button>
+                </div>
               </td>
+          
             </tr>
+          
         </tbody>
         </table>
         
@@ -118,22 +141,48 @@ html {
     background-color: #f2f2f283;
     padding: 10px;
 
-    .button-edit {
-      background-color: transparent;
-      border: none;
-      cursor: pointer;
-    }
-    .cart-items table {
-      width: 100%;
-      overflow-x: auto; // Agregar desplazamiento horizontal en pantallas pequeñas
-      white-space: nowrap; // Evitar que los elementos se envuelvan en pantallas pequeñas
-    }
+    .guardar {
+       width: 60%;
+       padding: 5px;
+       margin-top: 7px;
+       background-color: $blue;
+       color: #fff;
+       border: none;
+       border-radius: 3px;
+       margin-bottom: 2rem;
+       cursor: pointer;
+      }
 
-    .button-edit span {
-      background-color: transparent; // Establecer el fondo del icono como transparente
-      color: $azul; // Color del ícono si es necesario
-      font-size: 2.6rem; // Tamaño del ícono
-    }
+      select {
+       width: 51%;
+       margin-top: 10rem;
+       margin: 10px 0;
+       padding: 5px;
+       border: 1px solid #ccc;
+       border-radius: 5px;
+      }
+      label {
+        padding-right:1.1rem;
+        font-weight: bolder;
+      }
+
+
+      .button-edit {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+      }
+      .cart-items table {
+        width: 100%;
+        overflow-x: auto; // Agregar desplazamiento horizontal en pantallas pequeñas
+        white-space: nowrap; // Evitar que los elementos se envuelvan en pantallas pequeñas
+      }
+
+      .button-edit span {
+        background-color: transparent; // Establecer el fondo del icono como transparente
+        color: $azul; // Color del ícono si es necesario
+        font-size: 2.6rem; // Tamaño del ícono
+      }
     }
     .left-align {
       font-weight: bolder;
@@ -201,7 +250,7 @@ html {
 
 <script>
 import errorModal from "@/components/errorModal.vue";
-
+import modifyService from '@/services/shoppingCartServices/modifyItemService.js';
 import spinner from "@/components/spinner.vue";
 import Footer from "@/components/footer.vue";
 import successModal from "@/components/successModal.vue";
@@ -214,10 +263,13 @@ import { roundToNearestMinutes } from "date-fns";
 export default {
   data() {
     return {
-     
+      flight: {},
+      editingIndex: -1, // Inicializar editingIndex en -1 para indicar que no hay edición
+      // ... (otras variables de tu data)
       cartItems: [],
       total: 0, // You may need to initialize this based on your requirements
-      showSpinner: false,
+      showSpinner: false, seatQuantity: 0, seatClass: "", flightId: 0, userID: 0,
+      
     };
   },
   components: {
@@ -327,12 +379,39 @@ export default {
      return date.toLocaleDateString("es-ES", options);
    },
 
-   editItem(index) {
-      sessionStorage.setItem('flightToEdit', JSON.stringify(this.cartItems[index]));
-      sessionStorage.setItem('flightToEditIndex', index);
-      // Redirigir a la vista EditarCarrito
-      this.$router.push('/EditarCarrito');
+   toggleEdit(index) {
+      // Al hacer clic en el botón de editar, establecer el índice en editingIndex
+      this.editingIndex = index;
+
     },
+
+    // Carrito.vue
+
+  editItem(index) {
+    this.showSpinner = true;
+    const token = window.sessionStorage.getItem("JWTtoken");
+    const tokenData = JSON.parse(atob(token.split(".")[1]));
+
+    const userID = tokenData.ID;
+    const flightID = this.cartItems[index].flightId;
+    const seatQuantity = this.seatQuantity;
+    const seatClass = this.seatClass;
+
+    modifyService
+      .modifyItemInCart(userID, flightID, seatQuantity, seatClass)
+      .then(response => {
+        this.showSpinner = false;
+        console.log("Respuesta: ", response.data);
+        // Realiza las acciones necesarias después de la modificación exitosa
+      })
+      .catch(error => {
+        this.showSpinner = false;
+        console.error("Error al modificar el elemento del carrito:", error);
+        // Maneja errores o muestra mensajes al usuario según sea necesario
+      });
+  },
+
+
 
 
 

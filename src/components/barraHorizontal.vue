@@ -49,7 +49,7 @@
                         <li><a href="/M_Financiero">Módulo Financiero</a></li>
                         <li><a href="/Checkin">Check-in</a></li>
                         <li><a href="/List_Reservas">Reservas</a></li>
-                        <li v-if=" SuscritoNoticias === 1"><a href="/PromocionesUsuario">Noticias</a></li>
+                        <li v-if=" profile.subscribedToFeed === true"><a href="/PromocionesUsuario">Noticias</a></li>
                         <li> <div class="btn-cerrar" @click="logout">
                                 <span class="material-symbols-outlined">logout</span>Cerrar sesión
                             </div></li>
@@ -327,7 +327,7 @@ $secondary: #a7d6f6;
 </style>
 
 <script>
-
+import viewProfileService from "@/services/userService/viewProfileService.js";
 import logoutService from "@/services/authenticationService/logoutService.js";
 export default {
 
@@ -361,6 +361,50 @@ export default {
         this.getUserRole(); // Llama a la función para obtener el rol del usuario
 
     },
+    created() {
+        
+        
+        // Create a Date object from the Unix timestamp
+
+        // Get the user ID from the JWT token in sessionStorage
+        const token = window.sessionStorage.getItem('JWTtoken');
+        if (this.token) {
+            this.getUserRole(); // Llama a la función para obtener el rol del usuario
+                const tokenData = JSON.parse(atob(token.split('.')[1]));
+      
+                const id = tokenData.ID;
+                viewProfileService.viewProfile(id)
+            .then(response => {
+                this.profile = response.data;
+                if (response.status == 200) {
+                    this.showSpinner = false;
+                    console.log("User Profile", response.data);
+                    // You can redirect the user or perform other actions here.
+                }
+            })
+            .catch(error => {
+                this.showSpinner = false;
+                // Handle login errors here
+                if (error.response.status == 403) {
+                    console.log("User not found sorry:", error.response.status, error);
+                    this.errorMessage = error.response.data.message || "User not found sorry";
+                    this.showErrorMessage = true;
+                }
+                else {
+                    // You can redirect the user or perform other actions here.
+                    console.error("Something happened:", error);
+                    this.errorMessage = error.response.data.message || "Something happened";
+                    this.showErrorMessage = true;
+                }
+                // Display an error message to the user or take appropriate action.
+                console.error('Error fetching user data:', error);
+                this.errorMessage = error.response.data.message || "Error en el fetching, por favor cierre sesión y vuelva a iniciarla";
+                this.showErrorMessage = true;
+            });
+        }
+      
+        
+        },
 
     methods: {
         handleUserIconClick() {
