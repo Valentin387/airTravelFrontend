@@ -319,6 +319,7 @@ export default {
 
             // You can redirect the user or perform other actions here.
             this.$router.push("/");
+            window.location.reload(); // Recarga la página
           }
         })
         .catch((error) => {
