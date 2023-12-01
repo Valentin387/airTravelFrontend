@@ -318,8 +318,8 @@ export default {
             console.log("Login successful:", response.data);
 
             // You can redirect the user or perform other actions here.
-            this.$router.push("/");
-            window.location.reload(); // Recarga la página
+            window.location.replace("/"); // Recarga la página y redirige a "/"
+           
           }
         })
         .catch((error) => {
