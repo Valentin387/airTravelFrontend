@@ -510,8 +510,8 @@ export default {
   },
   mounted() {
    
-    const parametros = sessionStorage.getItem('search')
-    sessionStorage.removeItem('searchResults');
+    const parametros = sessionStorage.getItem('searchResults')
+ 
 
     if (parametros) {
 
