@@ -356,7 +356,9 @@ export default {
             },
         };
     },
-   
+   mounted(){
+    this.getUserRole(); // Llama a la función para obtener el rol del usuario
+   },
     created() {
         
         

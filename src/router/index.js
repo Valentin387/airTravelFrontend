@@ -208,27 +208,6 @@ router.beforeEach((to, from, next) => {//Antes de cada transición:  hacia donde
         next()
     }
 
-    const token = window.sessionStorage.getItem('JWTtoken');
-    if (token) {
-        const tokenData = JSON.parse(atob(token.split('.')[1]));
     
-        // Verifica el rol del usuario
-        if (tokenData.role == "root") {
-          // Asigna el rol del usuario según los datos del token
-          // Esto puede almacenarse en el Vuex Store o en el componente actual
-          // por simplicidad, lo almacenaremos en el componente actual
-          this.userRole = 1;
-        } else if (tokenData.role == "admin") {
-          this.userRole = 2;
-        } else if (tokenData.role == "registeredUser") {
-          this.userRole = 3;
-        }
-        
-        // Continúa con la navegación
-        next();
-      } else {
-        // Si no hay token, redirige a la página de inicio de sesión
-        next('/Login');
-      }
 });
 export default router

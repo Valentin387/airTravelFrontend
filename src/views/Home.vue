@@ -911,12 +911,16 @@ export default {
     };
   },
   mounted() {
+    const token = window.sessionStorage.getItem("JWTtoken");
+    if (token) {
     this.fetchOffers();
+    }
 
   },
   created() {
     // Get the user ID from the JWT token in sessionStorage
     const token = window.sessionStorage.getItem("JWTtoken");
+    if (token) {
     const tokenData = JSON.parse(atob(token.split(".")[1]));
     const id = tokenData.ID;
 
@@ -953,6 +957,7 @@ export default {
           "Error en el fetching, por favor cierre sesión y vuelva a iniciarla";
         this.showErrorMessage = true;
       });
+    }
   },
   methods: {
     verVuelos(nombreVuelo) {
