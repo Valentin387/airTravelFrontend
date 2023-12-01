@@ -3,72 +3,67 @@
       <div class="cart-header">
         <h2>Carrito de Compra</h2>
       </div>
-      <div class="cart-items">
-        <table>
-          <thead>
-            <tr>
-              <th class="left-align">Vuelo</th>
-              <th class="left-align">Origen</th>
-              <th class="left-align">Destino</th>
-              <th class="left-align">Fecha de despegue</th>
-              <th class="left-align">Cantidad de asientos</th>
-              <th class="left-align">Costo por pasajero</th>
-              <th class="left-align">Costo con Oferta</th>
-              <th class="left-align"></th>
-            </tr>
-          </thead>
-          <tbody>
-           <tr v-for="(item, index) in cartItems" :key="index">
-              <td class="left">{{ item.flightId }}</td>
-              <td class="left">{{ item.origin }}</td>
-              <td class="left">{{ item.destination }}</td>
-              <td class="left">{{ formatDate(item.flightDate) }}</td>
-              <td class="left">{{ item.seats.length }}</td>
-              <td class="left" :class="{ 'strike-through': item.costByPersonOffer > 0 }">${{ item.costByPerson }}</td>
-              <td class="left">${{ item.costByPersonOffer }}</td>
-  
-            
-              <td>
-                <button class="button-delete" @click="removeItem(index)">X</button>
-              </td>
-            
-              <td>
-                <button class="button-edit" @click="toggleEdit(index)">
-                  <span class="material-symbols-outlined">edit</span>
-                </button>
+      <div v-if="editingIndex === -1">
+        <div class="cart-items">
+          <table>
+            <thead>
+              <tr>
+                <th class="left-align">Vuelo</th>
+                <th class="left-align">Origen</th>
+                <th class="left-align">Destino</th>
+                <th class="left-align">Fecha de despegue</th>
+                <th class="left-align">Cantidad de asientos</th>
+                <th class="left-align">Costo por pasajero</th>
+                <th class="left-align">Costo con Oferta</th>
+                <th class="left-align"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(item, index) in cartItems" :key="index">
+                <td class="left">{{ item.flightId }}</td>
+                <td class="left">{{ item.origin }}</td>
+                <td class="left">{{ item.destination }}</td>
+                <td class="left">{{ formatDate(item.flightDate) }}</td>
+                <td class="left">{{ item.seats.length }}</td>
+                <td class="left" :class="{ 'strike-through': item.costByPersonOffer > 0 }">${{ item.costByPerson }}</td>
+                <td class="left">${{ item.costByPersonOffer }}</td>
+      
                 
-                <div v-if="editingIndex === index">
-                  <label for="seatQuantity">Cantidad de Asientos:</label>
-                  <select v-model="seatQuantity" id="seatQuantity">
-                    <option value= "1">1 </option>
-                    <option value= "2">2 </option>
-                    <option value= "3">3 </option>
-                    <option value= "4" >4 </option>
-                    <option value= "5" >5 </option> 
-                  </select>
-                  <br>
-                  <label for="seatClass">Clase:</label>
-                  <br>
-                  <select v-model="seatClass" id="seatClass">
-                    <option value="Economic Class">Económica</option>
-                    <option value="First Class">Primera Clase</option>
-                  </select>
-                  <br>
-                  <button class="guardar" @click="editItem(index)">Guardar</button>
-                </div>
-              </td>
-          
-            </tr>
-          
-        </tbody>
-        </table>
-        
+                <td>
+                    <button class="button-delete" @click="removeItem(index)">X</button>
+                </td>
+                
+                <td>
+                  <button class="button-edit" @click="toggleEdit(index)">
+                  <span class="material-symbols-outlined">edit</span>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="cart-total">
+          <p><strong>Total:  </strong> $ {{ total  }}</p>
+          <button class="button-buy" @click="purchase">Comprar Ahora</button>
+        </div>
       </div>
-      <div class="cart-total">
-        <p><strong>Total:  </strong> $ {{ Math.round(total * 100) / 100 }}</p>
-        <button class="button-buy" @click="purchase">Comprar Ahora</button>
+      
+      <div v-else>
+        <div class="edit-section">
+          <label for="seatClass">Clase:</label>
+          <select id="seatClass" v-model="seatClass">
+            <option value="First Class">First Class</option>
+              <option value="Economic Class">Economic Class</option>
+          </select>
+          <label for="seatQuantity">Cantidad de asientos:</label>
+          <select id="seatQuantity" v-model="seatQuantity">
+            <option v-for="i in 5" :value="i" :key="i">{{ i }}</option>
+          </select>
+          <button class="guardar" @click="saveChanges">Guardar</button>
+        </div>
       </div>
     </div>
+  
       <!------------------------------------------------FOOTER------------------------------------------->
   <Footer></Footer>
 </template>
@@ -264,11 +259,15 @@ export default {
   data() {
     return {
       flight: {},
-      editingIndex: -1, // Inicializar editingIndex en -1 para indicar que no hay edición
       // ... (otras variables de tu data)
       cartItems: [],
       total: 0, // You may need to initialize this based on your requirements
-      showSpinner: false, seatQuantity: 0, seatClass: "", flightId: 0, userID: 0,
+      showSpinner: false, 
+      editingIndex: -1,
+      seatQuantity: 0,
+      seatClass: "",
+      flightId: 0,
+      userID: 0,
       
     };
   },
@@ -380,36 +379,42 @@ export default {
    },
 
    toggleEdit(index) {
-      // Al hacer clic en el botón de editar, establecer el índice en editingIndex
       this.editingIndex = index;
+      // Al hacer clic en editar, inicializar los valores con los actuales del elemento del carrito
+      this.seatQuantity = this.cartItems[index].seats.length;
+      this.seatClass = this.cartItems[index].class; // Supongamos que 'class' es la propiedad que contiene la clase de asiento
+    },
 
+    saveChanges() {
+      const editedItem = this.cartItems[this.editingIndex];
+      // Actualizar la información del elemento del carrito con los valores editados
+      editedItem.seats = new Array(this.seatQuantity); // Actualizar la cantidad de asientos
+      editedItem.class = this.seatClass; // Actualizar la clase de asiento
+
+      // Enviar la solicitud para modificar el elemento del carrito
+      const token = window.sessionStorage.getItem('JWTtoken');
+      const tokenData = JSON.parse(atob(token.split('.')[1]));
+      const userID = tokenData.ID;
+
+      modifyService.modifyItemInCart(
+        userID,
+        editedItem.flightId, // Suponiendo que 'flightId' es la propiedad que identifica el vuelo
+        this.seatQuantity,
+        this.seatClass
+      )
+        .then(response => {
+          // Manejar la respuesta del servidor si es necesario
+          console.log("Elemento del carrito modificado:", response);
+          // Después de modificar, resetear el estado de edición
+          this.editingIndex = -1;
+        })
+        .catch(error => {
+          console.error("Error al modificar el elemento del carrito:", error);
+          // Manejar errores si es necesario
+        });
     },
 
     // Carrito.vue
-
-  editItem(index) {
-    this.showSpinner = true;
-    const token = window.sessionStorage.getItem("JWTtoken");
-    const tokenData = JSON.parse(atob(token.split(".")[1]));
-
-    const userID = tokenData.ID;
-    const flightID = this.cartItems[index].flightId;
-    const seatQuantity = this.seatQuantity;
-    const seatClass = this.seatClass;
-
-    modifyService
-      .modifyItemInCart(userID, flightID, seatQuantity, seatClass)
-      .then(response => {
-        this.showSpinner = false;
-        console.log("Respuesta: ", response.data);
-        // Realiza las acciones necesarias después de la modificación exitosa
-      })
-      .catch(error => {
-        this.showSpinner = false;
-        console.error("Error al modificar el elemento del carrito:", error);
-        // Maneja errores o muestra mensajes al usuario según sea necesario
-      });
-  },
 
 
 

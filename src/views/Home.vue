@@ -343,7 +343,7 @@
   <!-------------------------Sección sobre información de la aerolinea y video------------------------------------->
   <section class="about" id="about">
     <div class="video-container" data-aos="fade-right" datas-aos-delay="300">
-      <video class="video" src="../assets/londres.mp4" autoplay loop muted></video>
+      <img class="video" src="../assets/miami.jpg" >
       <div class="controls">
         <span class="control-btn"></span>
         <span class="control-btn"></span>
@@ -732,7 +732,7 @@ body {
   .video-container {
     flex: 1 1 42rem;
 
-    video {
+    img {
       border-radius: 1rem;
       width: 100%;
     }

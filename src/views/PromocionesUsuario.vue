@@ -73,7 +73,7 @@
                             <p class="price"><strong>Descuento:</strong> <strong style="color: rgb(14, 14, 15);">{{
                                 offer.discount }}%</strong></p>
                             <!-- Botón "Ver Oferta" -->
-                            <button @click="verOferta(offer[index])">Ver Oferta</button>
+                            <button @click="verOferta(offer)">Ver Oferta</button>
                         </div>
                     </div>
                 </div>
@@ -451,6 +451,7 @@ export default {
                 destination: '',
                 validDateRange: '',
             },
+            numPassengers : 1,
             showConfirmationModal: false,
             confirmationMessage: '¿Estás seguro de cancelar la promoción?',
             offerToDelete: null
@@ -521,50 +522,37 @@ export default {
             });
         },
 
-        cancelPromotion(offer) {
-            const confirmation = window.confirm('¿Estás seguro de cancelar esta promoción?');
-
-            if (confirmation) {
-                deleteService.deleteOffer(offer.id)
-                    .then(response => {
-                        if (response.status === 200) {
-                            const index = this.offers.findIndex(o => o.id === offer.id);
-                            if (index !== -1) {
-                                this.offers.splice(index, 1);
-                                this.performOfferSearch();
-                            }
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error al eliminar la oferta:", error);
-                        // Aquí podrías mostrar un mensaje de error si ocurre un problema con la eliminación
-                    });
-            } else {
-                // Acción en caso de cancelar la eliminación (puede ser dejarlo vacío o mostrar un mensaje)
-            }
-        },
+        
         verOferta(offer) {
-            flightService
-            .parametrizedSearch( offer.origin, offer.destination, offer.validDateRange)
-            .then((response) => {
-            console.log(response.status);
-            if (response.status === 200) {
-                console.log("Vuelos encontrados:", response.data);
+            const numPassengers = 1;
+            const searchParams = {
+                origin: offer.origin,
+                destination: offer.destination,
+                validDateRange: offer.validDateRange,
+                numPassengers: numPassengers
+            };
 
-                // Almacena los vuelos en el almacenamiento de la sesión
-                sessionStorage.setItem(
-                "searchResults",
-                JSON.stringify(response.data)
-                );
+            flightService.parametrizedSearch(searchParams)
+                .then((response) => {
+                    console.log(response.status);
+                    if (response.status === 200) {
+                        console.log("Vuelos encontrados:", response.data);
 
-                // Redirige a la nueva vista
-                this.$router.push({ name: "SearchResults" });
-            }
-            })
-            .catch((error) => {
-            console.error("Error en la búsqueda de vuelos:", error);
-            });
+                        // Almacena los vuelos en el almacenamiento de la sesión
+                        sessionStorage.setItem(
+                            "searchResults",
+                            JSON.stringify(response.data)
+                        );
+
+                        // Redirige a la nueva vista
+                        this.$router.push({ name: "SearchResults" });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error en la búsqueda de vuelos:", error);
+                });
         },
+
 
         // Otros métodos necesarios
         // ... offer.validDateRange === this.searchParams.validDateRange
