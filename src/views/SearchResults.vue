@@ -528,7 +528,7 @@ export default {
             console.log("Vuelos encontrados:", response.data);
             this.flights = response.data;
             // Cuando el usuario realiza una búsqueda, almacenar los parámetros en sessionStorage
-            sessionStorage.setItem('searchResults', JSON.stringify(response.data));
+            sessionStorage.setItem('search', JSON.stringify(response.data));
 
           }
         })
