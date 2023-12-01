@@ -20,7 +20,7 @@ import CentroAyuda from '../views/CentroAyuda.vue'
 import ListVuelosClient from '../views/ListVuelos_Client.vue'
 import CrearVuelo from '../views/CrearVuelo.vue'
 import DatosPasajeros from '../views/DatosPasajeros.vue'
-import CrearOfertaAdmin from '../views/CrearOfertaAdmin.vue'
+import CrearOfertaAdmin from '../views/CrearOfertasAdmin.vue'
 import ListOfertasAdmin from '../views/ListOfertasAdmin.vue'
 import Purchase from '../views/Purchase.vue'
 
@@ -29,7 +29,6 @@ import PromocionesUsuario from '../views/PromocionesUsuario.vue'
 import Checkin from '../views/Check-in.vue'
 
 import EditarVuelo from '../views/EditarVuelo.vue'
-import EditarCarrito from '../views/EditarCarrito.vue'
 const router = createRouter ({
 
     history: createWebHistory(),
@@ -178,14 +177,7 @@ const router = createRouter ({
             component: EditarVuelo,
             meta: { requiresAuth: true }
         },
-        {
-            path: '/EditarCarrito',
-            name: 'EditarCarrito',
-            component: EditarCarrito,
-            meta: { requiresAuth: true }
-        },
     ]
-    
     
 })
 
@@ -207,7 +199,5 @@ router.beforeEach((to, from, next) => {//Antes de cada transición:  hacia donde
     }else{
         next()
     }
-
-    
 });
 export default router
