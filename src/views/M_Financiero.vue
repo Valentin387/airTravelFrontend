@@ -412,7 +412,7 @@ import successModal from "@/components/successModal.vue";
         }
       },
       async getUserCards() {
-        this.showSpinner = true;
+      
         try {
          
           const token = window.sessionStorage.getItem("JWTtoken");//Obtener el token 

@@ -318,7 +318,10 @@ export default {
             console.log("Login successful:", response.data);
 
             // You can redirect the user or perform other actions here.
-            window.location.replace("/"); // Recarga la página y redirige a "/"
+            setTimeout(() => {
+              window.location.reload(); // Reload the page
+              window.location.href = "/"; // Redirect to the main route
+            }, 1000); // Delay in milliseconds (1 second in this example)
            
           }
         })
