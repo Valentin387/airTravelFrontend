@@ -511,6 +511,7 @@ export default {
   mounted() {
    
     const parametros = sessionStorage.getItem('search')
+    sessionStorage.removeItem('searchResults');
 
     if (parametros) {
 
