@@ -412,9 +412,9 @@ import successModal from "@/components/successModal.vue";
         }
       },
       async getUserCards() {
-      
+        showSpinner = true; // Initialize as hidden
         try {
-         
+          
           const token = window.sessionStorage.getItem("JWTtoken");//Obtener el token 
             if (token && token != null) {
                 const token = window.sessionStorage.getItem("JWTtoken");
@@ -422,6 +422,7 @@ import successModal from "@/components/successModal.vue";
                   const tokenData = JSON.parse(atob(token.split('.')[1]));
                   this.userID = tokenData.ID;
                   console.log('usuario:', this.userID);  //Obtener el ID de usuario del token
+                  this.showSpinner = false; // Initialize as hidden
                 }
             }
           // Llama al servicio listCards con el ID del usuario

@@ -317,7 +317,7 @@ export default {
             window.sessionStorage.setItem("JWTtoken", token);
             console.log("Login successful:", response.data);
 
-            // You can redirect the user or perform other actions here.
+            // Redirección y recarga a pagina de inicio para que aparezca el menu del usuario
             setTimeout(() => {
               window.location.reload(); // Reload the page
               window.location.href = "/"; // Redirect to the main route
