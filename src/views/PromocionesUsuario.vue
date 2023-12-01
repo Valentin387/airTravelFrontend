@@ -44,7 +44,7 @@
                     <input type="date" name="departureDate" v-model="searchParams.validDateRange" />
                 </div>
 
-                <input type="submit" value="Buscar" class="btn_buscar" /><!--Botón de busqueda de vuelo -->
+                <button type="submit" value="Buscar" class="btn_buscar" @click="performOfferSearch">Buscar</button><!--Botón de busqueda de vuelo -->
               
 
             </form>
@@ -466,6 +466,7 @@ export default {
     },
     mounted() {
         this.fetchOffers();
+        
 
     },
     methods: {
@@ -489,6 +490,7 @@ export default {
             flightServiceOffer.getOffers()
                 .then(response => {
                     if (response.status === 200) {
+                        
                         this.offers = response.data;
                         this.filteredOffers = this.offers;
 
@@ -537,7 +539,6 @@ export default {
                 return true;
             });
         },
-        
         
         verOferta(offer) {
             const offerDate = new Date(offer.validDateRange);

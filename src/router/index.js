@@ -150,7 +150,7 @@ const router = createRouter ({
             component: DatosPasajeros
         },
         {
-            path: '/CrearOfertasAdmin',
+            path: '/CrearOfertaAdmin',
             name: 'CrearOfertaAdmin',
             component: CrearOfertaAdmin,
             meta: { requiresAuth: true }
