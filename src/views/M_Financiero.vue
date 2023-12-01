@@ -491,6 +491,7 @@ import successModal from "@/components/successModal.vue";
       },
    
       addNewCard() {
+        this.showSpinner = true; // Initialize as hidden
         const token = window.sessionStorage.getItem("JWTtoken");//Obtener el token 
             if (token && token != null) {
                 const token = window.sessionStorage.getItem("JWTtoken");
@@ -498,6 +499,7 @@ import successModal from "@/components/successModal.vue";
                   const tokenData = JSON.parse(atob(token.split('.')[1]));
                   this.userID = tokenData.ID;
                   console.log('usuario:', this.userID);  //Obtener el ID de usuario del token
+                  this.showSpinner = false; // Initialize as hidden
                 }
             }
         const cardData = {
@@ -528,6 +530,7 @@ import successModal from "@/components/successModal.vue";
           });
       },
       async editCardBalance(cardId) {
+        this.showSpinner = true; // Initialize as hidden
         try {
           // Lógica para obtener el nuevo saldo (puedes pedirlo al usuario o proporcionar un campo de entrada)
           const newBalance = prompt('Ingrese el nuevo saldo:');
@@ -547,6 +550,7 @@ import successModal from "@/components/successModal.vue";
         }
       },
       selectOption(option) {
+        
         this.selectedOption = option;
       },
     
