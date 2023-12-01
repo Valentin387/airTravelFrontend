@@ -520,8 +520,7 @@ export default {
       this.searchParams.flightDate = this.flights.flightDate;
       this.searchParams.numPassengers = this.flights.numPassengers;
         console.log("Flights:", this.flights);
-         flightService
-        .parametrizedSearch(this.searchParams)
+         flightService.parametrizedSearch(this.searchParams)
         .then((response) => {
           console.log(response.status);
           if (response.status === 200) {
