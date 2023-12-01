@@ -45,7 +45,7 @@
                 </div>
 
                 <input type="submit" value="Buscar" class="btn_buscar" /><!--Botón de busqueda de vuelo -->
-                <form action="/CrearOfertaAdmin" method="get">
+                <form action="/CrearOfertasAdmin" method="get">
                     <button type="submit" class="btn_buscar">Crear Oferta</button>
                 </form>
 

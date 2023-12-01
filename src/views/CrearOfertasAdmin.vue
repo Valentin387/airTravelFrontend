@@ -36,7 +36,7 @@
                         </select>
                         <div></div>
                         <span for="discount"><strong> Descuento:</strong> </span>
-                        <input type="number" id="discount" placeholder="Descuento " v-model="discount" required />
+                        <input type="number" id="discount" placeholder="Descuento (%)" v-model="discount" required />
                         <span class="simbolo"><strong> %</strong></span>
                         <div></div>
                         <span class="expiration-date"><strong>Fecha de vencimiento de la promoción </strong></span>
@@ -267,19 +267,14 @@ export default {
   methods: {
     async submitOffer() {
       try {
-        const offerDate = new Date( this.validDateRange);
-        const year = offerDate.getFullYear();
-        const month = (offerDate.getMonth() + 1).toString().padStart(2, '0');
-        const day = offerDate.getDate().toString().padStart(2, '0');
-        const formattedDate = `${year}-${month}-${day}`;
-        const credentials = { 
-          origin: this.origin,
-          destination: this.destination,
-          discount: this.discount,
-          validDateRange: formattedDate,
-          description: this.description};
         // Llama a la función createOffer del servicio con los datos del formulario
-        await offerService.createOffer(credentials);
+        await offerService.createOffer(
+          this.origin,
+          this.destination,
+          this.discount,
+          this.validDateRange,
+          this.description
+        );
 
         // Aquí podrías agregar lógica adicional, como mostrar un mensaje de éxito
         console.log('Oferta creada exitosamente!');

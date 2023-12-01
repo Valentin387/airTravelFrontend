@@ -48,7 +48,6 @@
                         <li><a href="/Perfil">Perfil</a></li>
                         <li><a href="/M_Financiero">Módulo Financiero</a></li>
                         <li><a href="/Checkin">Check-in</a></li>
-                        <li><a href="/List_Reservas">Reservas</a></li>
                         <li v-if=" profile.subscribedToFeed === true"><a href="/PromocionesUsuario">Noticias</a></li>
                         <li> <div class="btn-cerrar" @click="logout">
                                 <span class="material-symbols-outlined">logout</span>Cerrar sesión
