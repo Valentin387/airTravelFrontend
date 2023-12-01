@@ -301,7 +301,7 @@ export default {
             if (response.status == 200){
               this.total = response.data.totalAmount;
               window.sessionStorage.setItem('total', JSON.stringify(this.total));
-              console.log(response);
+              console.log(response.data.totalAmount);
             }
           })
           .catch(error => {
@@ -407,6 +407,7 @@ export default {
           console.log("Elemento del carrito modificado:", response);
           // Después de modificar, resetear el estado de edición
           this.editingIndex = -1;
+          this.getTotal();
         })
         .catch(error => {
           console.error("Error al modificar el elemento del carrito:", error);
