@@ -433,7 +433,7 @@ html {
 <script>
 import flightServiceOffer from "@/services/offerService/listOfferService.js";
 import flightService from "@/services/searchService/parametrizedSearchService.js";
-import deleteService from "@/services/offerService/deleteOfferService.js";
+
 import Footer from "@/components/footer.vue";
 import errorModal from "@/components/errorModal.vue";
 
@@ -444,14 +444,21 @@ export default {
     },
     data() {
         return {
+            flights: [],
             offers: [], // Almacena todas las ofertas obtenidas inicialmente
             filteredOffers: [], // Ofertas filtradas según los parámetros de búsqueda
             searchParams: {
                 origin: '',
                 destination: '',
-                validDateRange: '',
+                flightDate: '',
             },
-            numPassengers : 1,
+            searchParams2: {
+                origin: '',
+                destination: '',
+                flightDate: '',
+                numPassengers : 1,
+            },
+            
             showConfirmationModal: false,
             confirmationMessage: '¿Estás seguro de cancelar la promoción?',
             offerToDelete: null
@@ -462,6 +469,15 @@ export default {
 
     },
     methods: {
+        formatDate2(dateString) {
+            const date = new Date(dateString);
+
+            const year = date.getFullYear().toString();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+
+            return `${year}-${month}-${day}`;
+        },
         formatDate(dateString) {//Cambia el formato de la fecha de milisegundos a años, meses y dias 
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
             const date = new Date(dateString);
@@ -521,30 +537,29 @@ export default {
                 return true;
             });
         },
-
+        
         
         verOferta(offer) {
-            const numPassengers = 1;
-            const searchParams = {
+            const offerDate = new Date(offer.validDateRange);
+            const year = offerDate.getFullYear();
+            const month = (offerDate.getMonth() + 1).toString().padStart(2, '0');
+            const day = offerDate.getDate().toString().padStart(2, '0');
+            const formattedDate = `${year}-${month}-${day}`;
+            
+            const searchParams1 = {
                 origin: offer.origin,
                 destination: offer.destination,
-                validDateRange: offer.validDateRange,
-                numPassengers: numPassengers
+                flightDate: formattedDate,
+                numPassengers: 1,
             };
 
-            flightService.parametrizedSearch(searchParams)
+            flightService.parametrizedSearch(searchParams1)
                 .then((response) => {
-                    console.log(response.status);
                     if (response.status === 200) {
-                        console.log("Vuelos encontrados:", response.data);
-
-                        // Almacena los vuelos en el almacenamiento de la sesión
-                        sessionStorage.setItem(
-                            "searchResults",
-                            JSON.stringify(response.data)
-                        );
-
-                        // Redirige a la nueva vista
+                        // Almacena los parámetros de búsqueda en el almacenamiento de sesión
+                        sessionStorage.setItem("search", JSON.stringify(searchParams1));
+                      
+                        // Redirige a la vista de resultados de búsqueda
                         this.$router.push({ name: "SearchResults" });
                     }
                 })

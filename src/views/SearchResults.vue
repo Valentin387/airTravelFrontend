@@ -436,6 +436,7 @@ export default {
   data() {
     return {
       flights: [],
+     
       searchParams: {
         origin: "",
         destination: "",
@@ -508,27 +509,47 @@ export default {
     },
   },
   mounted() {
-    const storedOrigin = sessionStorage.getItem('searchOrigin');
-    const storedDestination = sessionStorage.getItem('searchDestination');
-    const storedFlightDate = sessionStorage.getItem('searchFlightDate');
-    const storedNumPassengers = sessionStorage.getItem('searchNumPassengers');
+   
+    const parametros = sessionStorage.getItem('search')
 
-    if (storedOrigin && storedDestination && storedFlightDate && storedNumPassengers) {
-      this.searchParams.origin = storedOrigin;
-      this.searchParams.destination = storedDestination;
-      this.searchParams.flightDate = storedFlightDate;
-      this.searchParams.numPassengers = storedNumPassengers;
+    if (parametros) {
+
+      this.flights = JSON.parse(parametros);
+      this.searchParams.origin = this.flights.origin ;
+      this.searchParams.destination = this.flights.destination;
+      this.searchParams.flightDate = this.flights.flightDate;
+      this.searchParams.numPassengers = this.flights.numPassengers;
+        console.log("Flights:", this.flights);
+         flightService
+        .parametrizedSearch(this.searchParams)
+        .then((response) => {
+          console.log(response.status);
+          if (response.status === 200) {
+            console.log("Vuelos encontrados:", response.data);
+            this.flights = response.data;
+            // Cuando el usuario realiza una búsqueda, almacenar los parámetros en sessionStorage
+            sessionStorage.setItem('searchResults', JSON.stringify(response.data));
+
+          }
+        })
+        .catch((error) => {
+          console.error("Error en la búsqueda de vuelos:", error);
+        });
+
     }
-    // Carga los vuelos almacenados en el almacenamiento de la sesión
-    const storedResults = sessionStorage.getItem('searchResults');
-    console.log("Stored Results:", storedResults);
+    else{
+        // Carga los vuelos almacenados en el almacenamiento de la sesión
+      const storedResults = sessionStorage.getItem('searchResults');
+      console.log("Stored Results:", storedResults);
 
-    if (storedResults) {
-      this.flights = JSON.parse(storedResults);
-      console.log("Flights:", this.flights);
+      if (storedResults) {
+        this.flights = JSON.parse(storedResults);
+        console.log("Flights:", this.flights);
 
 
+      }
     }
+    
   },
 };
 </script>
