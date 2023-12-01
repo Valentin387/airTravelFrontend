@@ -355,6 +355,7 @@ import successModal from "@/components/successModal.vue";
     data() {
       return {
         showSpinner: false, // Initialize as hidden
+        showSpinner:false, // Initialize as hidden
         token: window.sessionStorage.getItem("JWTtoken"),
         successMessage: "",
         showSuccessMessage: false,
@@ -382,6 +383,7 @@ import successModal from "@/components/successModal.vue";
       showAddCardForm() {
         this.showAddCard = true;
         this.showUserListCard = false; // Variable para controlar la visualización de las tarjetas del usuario
+        this.showSpinner = false; // Initialize as hidden
       },
 
       // Método para ocultar el formulario de agregar tarjeta
@@ -389,11 +391,12 @@ import successModal from "@/components/successModal.vue";
         
         this.showAddCard = false;
         this.showUserListCard = true;
-        this.showSpinner = true;
+        this.showSpinner = false;
        
         // Agrega lógica adicional si necesitas manejar la vista de las tarjetas del usuario
       },
       async removeCard(cardId) {
+        this.showSpinner = true;
         // Muestra un mensaje de confirmación antes de eliminar la tarjeta
         if (window.confirm('¿Estás seguro de que quieres eliminar esta tarjeta?')) {
           try {
@@ -412,7 +415,7 @@ import successModal from "@/components/successModal.vue";
         }
       },
       async getUserCards() {
-        showSpinner = true; // Initialize as hidden
+        this.showSpinner = true; // Initialize as hidden
         try {
           
           const token = window.sessionStorage.getItem("JWTtoken");//Obtener el token 
@@ -422,8 +425,9 @@ import successModal from "@/components/successModal.vue";
                   const tokenData = JSON.parse(atob(token.split('.')[1]));
                   this.userID = tokenData.ID;
                   console.log('usuario:', this.userID);  //Obtener el ID de usuario del token
-                  this.showSpinner = false; // Initialize as hidden
+                 
                 }
+                this.showSpinner = false; // Initialize as hidden
             }
           // Llama al servicio listCards con el ID del usuario
           const response = await FinancialServiceList.listCards(this.userID);
@@ -434,6 +438,7 @@ import successModal from "@/components/successModal.vue";
           console.error('Error al obtener las tarjetas:', error.message);
           this.errorMessage = "Error al obtener las tarjetas";
           this.showErrorMessage = true;
+          this.showSpinner = false; // Initialize as hidden
           // Manejo de errores
         }
       },
@@ -534,18 +539,25 @@ import successModal from "@/components/successModal.vue";
         try {
           // Lógica para obtener el nuevo saldo (puedes pedirlo al usuario o proporcionar un campo de entrada)
           const newBalance = prompt('Ingrese el nuevo saldo:');
+          if (newBalance !== null) {
+            // Llama al servicio editBalance para actualizar el saldo de la tarjeta
+            await FinancialServiceEdit.editBalance(cardId, newBalance);
 
-          // Llama al servicio editBalance para actualizar el saldo de la tarjeta
-          await FinancialServiceEdit.editBalance(cardId, newBalance);
+            // Actualiza la lista de tarjetas después de editar el saldo
+            this.getUserCards();
 
-          // Actualiza la lista de tarjetas después de editar el saldo
-          this.getUserCards();
-          
-          console.log('Saldo actualizado con éxito');
-          this.successMessage = "Saldo actualizado con éxito";
-          this.showSuccessMessage = true;
+            console.log('Saldo actualizado con éxito');
+            this.successMessage = "Saldo actualizado con éxito";
+            this.showSuccessMessage = true;
+          } else {
+            console.log('Operación cancelada por el usuario. El saldo no se ha actualizado.');
+            this.successMessage = "Operación cancelada. El saldo no se ha actualizado.";
+            this.showSuccessMessage = true;
+            this.showSpinner = false; // Initialize as hidden
+          }
         } catch (error) {
           console.error('Error al actualizar el saldo:', error.message);
+          this.showSpinner = false; // Initialize as hidden
           // Manejo de errores
         }
       },

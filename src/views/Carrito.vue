@@ -50,15 +50,19 @@
       
       <div v-else>
         <div class="edit-section">
+          <h2>Edita Tu Reserva</h2>
           <label for="seatClass">Clase:</label>
-          <select id="seatClass" v-model="seatClass">
-            <option value="First Class">First Class</option>
-              <option value="Economic Class">Economic Class</option>
+          <select class="seatClass"  placeholder="Seleccione una clase" v-model="seatClass">
+            <option value="" disabled selected>Seleccione una clase</option>
+            <option value="First Class">Primera Clase</option>
+              <option value="Economic Class">Clase Económica</option>
           </select>
+          <br>
           <label for="seatQuantity">Cantidad de asientos:</label>
-          <select id="seatQuantity" v-model="seatQuantity">
+          <select Class="seatQuantity" v-model="seatQuantity">
             <option v-for="i in 5" :value="i" :key="i">{{ i }}</option>
           </select>
+          <br>
           <button class="guardar" @click="saveChanges">Guardar</button>
         </div>
       </div>
@@ -115,6 +119,48 @@ html {
     }
 
 }
+.edit-section {
+   margin:0 auto;
+   text-align: center;
+   h2{
+    padding-bottom:2rem ;
+   }
+
+   margin-bottom: 1rem; // Espacio entre elementos centrados
+  .guardar {
+    width: 20%;
+    padding: 5px;
+    margin-top: 7px;
+    background-color: $blue;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    margin-bottom: 2rem;
+    cursor: pointer;
+  }
+
+   .seatClass  {
+    width: 20%;
+    margin-top: 10rem;
+    margin: 10px 0;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  .seatQuantity  {
+    width: 5%;
+    margin-top: 10rem;
+    margin: 10px 0;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  label {
+    padding-right:1.1rem;
+    font-weight: bolder;
+  }
+    
+}
     .cart-container {
       padding: 20px;
       border-radius: 5px;
@@ -136,30 +182,7 @@ html {
     background-color: #f2f2f283;
     padding: 10px;
 
-    .guardar {
-       width: 60%;
-       padding: 5px;
-       margin-top: 7px;
-       background-color: $blue;
-       color: #fff;
-       border: none;
-       border-radius: 3px;
-       margin-bottom: 2rem;
-       cursor: pointer;
-      }
-
-      select {
-       width: 51%;
-       margin-top: 10rem;
-       margin: 10px 0;
-       padding: 5px;
-       border: 1px solid #ccc;
-       border-radius: 5px;
-      }
-      label {
-        padding-right:1.1rem;
-        font-weight: bolder;
-      }
+    
 
 
       .button-edit {
