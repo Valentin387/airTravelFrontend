@@ -75,7 +75,6 @@
 }
 
 $blue: #54b2f1;
-
 $verde:  #4caf50;
 $border: 0.2rem solid $blue;
 $gris: #f7f7f7;
