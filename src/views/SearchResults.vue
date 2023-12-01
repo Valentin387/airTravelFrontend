@@ -84,9 +84,9 @@
               <p class="flight-location">{{ flight.origin }} - {{ flight.destination }}</p>
             </div>
             <div class="flight-price">
-              <p class="price">${{ flight.costByPerson }}</p>
-              <!-- Botón "Ver Oferta" -->
-              <button @click="verOferta(flight)">Ver Oferta</button>
+                  <p class="price" :class="{ 'strike-through': flight.costByPersonOffer > 0 }">${{ flight.costByPerson }}</p>
+                  <p class="price" v-if="flight.costByPersonOffer > 0"><span style="color:#0d629b;"><strong>Oferta:</strong></span> ${{ flight.costByPersonOffer }}</p>
+                 <button @click="verOferta(flight)">Ver Oferta</button>
             </div>
           </div>
         </div>
@@ -146,7 +146,10 @@ html {
     background-color: $azul;
   }
 }
-
+.strike-through {
+  text-decoration: line-through;
+  text-decoration-color: red; 
+}
 
 //-------------------Barra de busqueda de vuelos -------------------------
 .book-form {

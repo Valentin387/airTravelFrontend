@@ -1,5 +1,6 @@
 <template>
   <div class="list_container">
+    <spinner :showSpinner="showSpinner"></spinner>
     <div class="buttons-container">
       <div class="left-buttons">
         <button class = "activos" @click="showFlights('ON_TIME')" :class="{ activeButton: filter === 'ON_TIME' }">Activos</button>
@@ -50,9 +51,9 @@
               <td>
                 <!-- Add the click event to the delete button -->
                 <!-- Add the click event to the cancel button -->
-                <button class="button-delete" @click="logIdAndCancelFlight(flight.id)">x</button>
+                <button class="button-delete" @click="logIdAndCancelFlight(flight.id)" v-if="filter === 'ON_TIME'">x</button>
               </td>
-              <td><button class="editar" @click="EditFlight(flight.id)">Editar</button> </td>
+              <td><button class="editar" @click="EditFlight(flight.id)"  v-if="filter === 'ON_TIME' ">Editar</button> </td>
             </tr>
           </tbody>
         </table>
@@ -331,11 +332,11 @@ export default {
       }
     },
     formatDate(dateString) {
-     //Cambia el formato de la fecha de milisegundos a años, meses y dias
-     const options = { year: "numeric", month: "long", day: "numeric" };
-     const date = new Date(dateString);
-     return date.toLocaleDateString("es-ES", options);
-   },
+      //Cambia el formato de la fecha de milisegundos a años, meses y dias
+      const options = { year: "numeric", month: "long", day: "numeric" };
+      const date = new Date(dateString);
+      return date.toLocaleDateString("es-ES", options);
+    },
    formatDuration(duration) {
      //formato simplificado de tiempo de duración del vuelo ( reemplaza 00:00:00)
      const parts = duration.split(":").map((part) => parseInt(part, 10));

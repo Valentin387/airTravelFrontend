@@ -73,6 +73,7 @@
   <div v-else>
     <p class="loading">Cargando detalles del vuelo...</p>
   </div>
+  <success-modal :show-note="showSuccessMessage" :success-message="successMessage" @close="showSuccessMessage = false" />
   <Footer></Footer>
  
 </template>
@@ -324,6 +325,7 @@ button {
 <script>
 import addToCartService from '@/services/shoppingCartServices/addToCartService.js';
 import Footer from "@/components/footer.vue";
+import successModal from "@/components/successModal.vue";
 
 export default {
   name: 'DetalleVuelo',
@@ -335,6 +337,8 @@ export default {
       selectedSeats: 1,
       selectedClass: 'Primera Clase', // Valor predeterminado
       loading: true,
+      successMessage: "",
+      showSuccessMessage: false,
     };
   },
   methods: {
@@ -350,6 +354,8 @@ export default {
       addToCartService.addToCart(userID, flightID, seatQuantity, seatClass)
         .then(response => {
           console.log('Vuelo añadido al carrito exitosamente:', response.data);
+          this.successMessage = "¡Vuelo añadido al carrito exitosamente!";
+          this.showSuccessMessage = true;
         })
         .catch(error => {
           console.error('Error al añadir el vuelo al carrito:', error);
@@ -392,6 +398,7 @@ export default {
   },
   components: {
     Footer,
+    successModal,
   },
 
   created() {

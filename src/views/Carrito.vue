@@ -3,43 +3,67 @@
       <div class="cart-header">
         <h2>Carrito de Compra</h2>
       </div>
-      <div class="cart-items">
-        <table>
-          <thead>
-            <tr>
-              <th class="left-align">Vuelo</th>
-              <th class="left-align">Origen</th>
-              <th class="left-align">Destino</th>
-              <th class="left-align">Fecha de despegue</th>
-              <th class="left-align">Cantidad de asientos</th>
-              <th class="left-align">Costo por pasajero</th>
-              <th class="left-align">Costo con Oferta</th>
-              <th class="left-align"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(item, index) in cartItems" :key="index">
-              <td class="left">{{ item.flightId }}</td>
-              <td class="left">{{ item.origin }}</td>
-              <td class="left">{{ item.destination }}</td>
-              <td class="left">{{ formatDate(item.flightDate) }}</td>
-              <td class="left">{{ item.seats.length }}</td>
-              <td class="left" :class="{ 'strike-through': item.costByPersonOffer > 0 }">${{ item.costByPerson }}</td>
-              <td class="left">${{ item.costByPersonOffer }}</td>
-  
-              
-              <td>
-                <button class="button-delete" @click="removeItem(index)">X</button>
-              </td>
-            </tr>
-        </tbody>
-        </table>
+      <div v-if="editingIndex === -1">
+        <div class="cart-items">
+          <table>
+            <thead>
+              <tr>
+                <th class="left-align">Vuelo</th>
+                <th class="left-align">Origen</th>
+                <th class="left-align">Destino</th>
+                <th class="left-align">Fecha de despegue</th>
+                <th class="left-align">Cantidad de asientos</th>
+                <th class="left-align">Costo por pasajero</th>
+                <th class="left-align">Costo con Oferta</th>
+                <th class="left-align"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(item, index) in cartItems" :key="index">
+                <td class="left">{{ item.flightId }}</td>
+                <td class="left">{{ item.origin }}</td>
+                <td class="left">{{ item.destination }}</td>
+                <td class="left">{{ formatDate(item.flightDate) }}</td>
+                <td class="left">{{ item.seats.length }}</td>
+                <td class="left" :class="{ 'strike-through': item.costByPersonOffer > 0 }">${{ item.costByPerson }}</td>
+                <td class="left">${{ item.costByPersonOffer }}</td>
+      
+                
+                <td>
+                    <button class="button-delete" @click="removeItem(index)">X</button>
+                </td>
+                
+                <td>
+                  <button class="button-edit" @click="toggleEdit(index)">
+                  <span class="material-symbols-outlined">edit</span>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="cart-total">
+          <p><strong>Total:  </strong> $ {{ total  }}</p>
+          <button class="button-buy" @click="purchase">Comprar Ahora</button>
+        </div>
       </div>
-      <div class="cart-total">
-        <p><strong>Total:  </strong> $ {{ Math.round(total * 100) / 100 }}</p>
-        <button class="button-buy" @click="purchase">Comprar Ahora</button>
+      
+      <div v-else>
+        <div class="edit-section">
+          <label for="seatClass">Clase:</label>
+          <select id="seatClass" v-model="seatClass">
+            <option value="First Class">First Class</option>
+              <option value="Economic Class">Economic Class</option>
+          </select>
+          <label for="seatQuantity">Cantidad de asientos:</label>
+          <select id="seatQuantity" v-model="seatQuantity">
+            <option v-for="i in 5" :value="i" :key="i">{{ i }}</option>
+          </select>
+          <button class="guardar" @click="saveChanges">Guardar</button>
+        </div>
       </div>
     </div>
+  
       <!------------------------------------------------FOOTER------------------------------------------->
   <Footer></Footer>
 </template>
@@ -92,13 +116,13 @@ html {
 
 }
     .cart-container {
-    padding: 20px;
-    border-radius: 5px;
-    height: 85vh;
-    width: 90vw;
-    margin: 0 auto; /* Centrar horizontalmente */
-    margin-top: 10rem; /* Centrar verticalmente */
-    background-color: $secondary;
+      padding: 20px;
+      border-radius: 5px;
+      height: auto;
+      width: 90vw;
+      margin: 0 auto; /* Centrar horizontalmente */
+      margin-top: 10rem; /* Centrar verticalmente */
+      background-color: $secondary;
     }
     .strike-through {
       text-decoration: line-through;
@@ -111,6 +135,49 @@ html {
     .cart-items {
     background-color: #f2f2f283;
     padding: 10px;
+
+    .guardar {
+       width: 60%;
+       padding: 5px;
+       margin-top: 7px;
+       background-color: $blue;
+       color: #fff;
+       border: none;
+       border-radius: 3px;
+       margin-bottom: 2rem;
+       cursor: pointer;
+      }
+
+      select {
+       width: 51%;
+       margin-top: 10rem;
+       margin: 10px 0;
+       padding: 5px;
+       border: 1px solid #ccc;
+       border-radius: 5px;
+      }
+      label {
+        padding-right:1.1rem;
+        font-weight: bolder;
+      }
+
+
+      .button-edit {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+      }
+      .cart-items table {
+        width: 100%;
+        overflow-x: auto; // Agregar desplazamiento horizontal en pantallas pequeñas
+        white-space: nowrap; // Evitar que los elementos se envuelvan en pantallas pequeñas
+      }
+
+      .button-edit span {
+        background-color: transparent; // Establecer el fondo del icono como transparente
+        color: $azul; // Color del ícono si es necesario
+        font-size: 2.6rem; // Tamaño del ícono
+      }
     }
     .left-align {
       font-weight: bolder;
@@ -167,26 +234,41 @@ html {
     border-radius: 5px;
     cursor: pointer;
     }
+    // Media query para tamaños de pantalla más pequeños (ajusta según tus necesidades)
+    @media (max-width: 768px) {
+      .cart-items table {
+        // Estilos específicos para tamaños de pantalla más pequeños
+        font-size: 12px; // Tamaño de fuente más pequeño para adaptarse al espacio
+      }
+    }
 </style>
 
 <script>
 import errorModal from "@/components/errorModal.vue";
-
+import modifyService from '@/services/shoppingCartServices/modifyItemService.js';
 import spinner from "@/components/spinner.vue";
 import Footer from "@/components/footer.vue";
 import successModal from "@/components/successModal.vue";
 import listService from "@/services/shoppingCartServices/listService.js";
 import checkoutService from "@/services/shoppingCartServices/checkoutService.js";
 import dropService from "@/services/shoppingCartServices/dropService.js";
-import modifyService from "@/services/shoppingCartServices/modifyItemService.js";
+
 import { roundToNearestMinutes } from "date-fns";
 
 export default {
   data() {
     return {
-     
+      flight: {},
+      // ... (otras variables de tu data)
       cartItems: [],
       total: 0, // You may need to initialize this based on your requirements
+      showSpinner: false, 
+      editingIndex: -1,
+      seatQuantity: 0,
+      seatClass: "",
+      flightId: 0,
+      userID: 0,
+      
     };
   },
   components: {
@@ -206,26 +288,31 @@ export default {
   methods: {
     
     async getTotal(){
+      this.showSpinner = true;
       const token = window.sessionStorage.getItem('JWTtoken');
       const tokenData = JSON.parse(atob(token.split('.')[1]));
       const userID = tokenData.ID;
 
       // Llamar al servicio para obtener los items
       checkoutService.checkoutShoppingCart({"userID" : userID})
+      
           .then(response => {
+            this.showSpinner = false;
             if (response.status == 200){
               this.total = response.data.totalAmount;
               window.sessionStorage.setItem('total', JSON.stringify(this.total));
-              console.log(response);
+              console.log(response.data.totalAmount);
             }
           })
           .catch(error => {
+            this.showSpinner = false;
             console.error(error);
           });
     },
 
 
     async listItems() {
+      this.showSpinner = true;
       const token = window.sessionStorage.getItem('JWTtoken');
       const tokenData = JSON.parse(atob(token.split('.')[1]));
       const userID = tokenData.ID;
@@ -233,6 +320,7 @@ export default {
       // Llamar al servicio para obtener los items
       listService.listShoppingCartItems({"userID" : userID})
           .then(response => {
+            this.showSpinner = false;
             if (response.status == 200){
               this.cartItems = response.data;
               window.sessionStorage.setItem('cartItems', JSON.stringify(this.cartItems));
@@ -241,53 +329,47 @@ export default {
 
           })
           .catch(error => {
+            this.showSpinner = false;
             console.error(error);
           });
     },
     
 
     async purchase(){
+      this.showSpinner = true;
       //push to /Purchase
       this.$router.push("/Purchase");
     },
 
     removeItem(index) {
-      //use the service
-      const token = window.sessionStorage.getItem('JWTtoken');
-      const tokenData = JSON.parse(atob(token.split('.')[1]));
-      const userID = tokenData.ID;
-
-      dropService.dropItem({"userID" : userID, "flightID" :this.cartItems[index].flightId})
-          .then(response => {
-            if (response.status == 200){
-              console.log(response.data);
-            }
-          })
-          .catch(error => {
-            console.error(error);
-          });
-
-          listItems();
-          getTotal();
-    },
-    /*
-    updateSeatQuantity(item) {
-      // use the service
-      const token = window.sessionStorage.getItem('JWTtoken');
-      const tokenData = JSON.parse(atob(token.split('.')[1]));
-      const userID = tokenData.ID;
+      const shouldDelete = window.confirm('¿Estás seguro de que deseas eliminar este elemento del carrito?');
       
-      modifyService.modifyItemInCart(userID, flightID, seatQuantity, seatClass)
+      if (shouldDelete) {
+        const token = window.sessionStorage.getItem('JWTtoken');
+        const tokenData = JSON.parse(atob(token.split('.')[1]));
+        const userID = tokenData.ID;
+
+        dropService.dropItem({"userID" : userID, "flightID" : this.cartItems[index].flightId})
           .then(response => {
             if (response.status == 200){
               console.log(response.data);
+              // Eliminar el elemento del carrito después de confirmar la eliminación
+              this.cartItems.splice(index, 1);
+              // Volver a calcular el total y la lista de elementos después de eliminar
+              this.listItems();
+              this.getTotal();
             }
           })
           .catch(error => {
             console.error(error);
           });
+      } else {
+        // Si el usuario cancela la eliminación, no se hace nada
+        console.log('Eliminación cancelada');
+      }
     },
-    */
+
+    
 
     formatDate(dateString) {
      //Cambia el formato de la fecha de milisegundos a años, meses y dias
@@ -295,6 +377,49 @@ export default {
      const date = new Date(dateString);
      return date.toLocaleDateString("es-ES", options);
    },
+
+   toggleEdit(index) {
+      this.editingIndex = index;
+      // Al hacer clic en editar, inicializar los valores con los actuales del elemento del carrito
+      this.seatQuantity = this.cartItems[index].seats.length;
+      this.seatClass = this.cartItems[index].class; // Supongamos que 'class' es la propiedad que contiene la clase de asiento
+    },
+
+    saveChanges() {
+      const editedItem = this.cartItems[this.editingIndex];
+      // Actualizar la información del elemento del carrito con los valores editados
+      editedItem.seats = new Array(this.seatQuantity); // Actualizar la cantidad de asientos
+      editedItem.class = this.seatClass; // Actualizar la clase de asiento
+
+      // Enviar la solicitud para modificar el elemento del carrito
+      const token = window.sessionStorage.getItem('JWTtoken');
+      const tokenData = JSON.parse(atob(token.split('.')[1]));
+      const userID = tokenData.ID;
+
+      modifyService.modifyItemInCart(
+        userID,
+        editedItem.flightId, // Suponiendo que 'flightId' es la propiedad que identifica el vuelo
+        this.seatQuantity,
+        this.seatClass
+      )
+        .then(response => {
+          // Manejar la respuesta del servidor si es necesario
+          console.log("Elemento del carrito modificado:", response);
+          // Después de modificar, resetear el estado de edición
+          this.editingIndex = -1;
+          this.getTotal();
+        })
+        .catch(error => {
+          console.error("Error al modificar el elemento del carrito:", error);
+          // Manejar errores si es necesario
+        });
+    },
+
+    // Carrito.vue
+
+
+
+
 
   },
 };

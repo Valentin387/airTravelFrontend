@@ -49,7 +49,7 @@
                         <li><a href="/M_Financiero">Módulo Financiero</a></li>
                         <li><a href="/Checkin">Check-in</a></li>
                         <li><a href="/List_Reservas">Reservas</a></li>
-                        <li v-if=" SuscritoNoticias === 1"><a href="/PromocionesUsuario">Noticias</a></li>
+                        <li v-if=" profile.subscribedToFeed === true"><a href="/PromocionesUsuario">Noticias</a></li>
                         <li> <div class="btn-cerrar" @click="logout">
                                 <span class="material-symbols-outlined">logout</span>Cerrar sesión
                             </div></li>
@@ -154,6 +154,72 @@ $secondary: #a7d6f6;
             font-size: 3rem; //Tamaño del icono de carrito y usuario
         }
     }
+
+
+    .menuUsuario.active {
+        visibility: visible;
+        opacity: 1;
+    }
+    
+    .menuUsuario {
+        position: absolute;
+        top: 100%;
+        /* Coloca el menú justo debajo del ícono del usuario */
+        right: 0;
+        background-color: $blanco;
+        /* Color de fondo del menú del usuario */
+        border-radius: 15px;
+        width: 200px;
+        box-sizing: border-box;
+        /* Corrige la propiedad box-sizing */
+        visibility: hidden;
+        opacity: 0;
+        transition: visibility 0s, opacity 0.5s linear;
+        /* Transición para la visibilidad y opacidad */
+        align-items: center;
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+
+            li {
+                padding: 10px;
+                display: flex;
+                align-items: center;
+
+                a {
+                    text-decoration: none;
+                    color: $azul;
+                    background-color: transparent;
+                    font-weight: 500;
+                    transition: color 0.3s;
+                    /* Transición para el cambio de color */
+
+                    &:hover {
+                        color: $verde;
+                        /* Cambio de color al pasar el mouse */
+                    }
+                }
+
+                .btn-cerrar {
+                    text-decoration: none;
+                    color: $azul;
+                    margin-right:0.5rem ;
+                    background-color: transparent;
+                    font-weight: 500;
+                    transition: color 0.3s;
+                    /* Transición para el cambio de color */
+
+                    &:hover {
+                        color: $verde;
+                        /* Cambio de color al pasar el mouse */
+                    }
+                }
+            }
+        }
+    }
+
 }
 
 //LOGO----------------------------------------------------------------
@@ -257,73 +323,11 @@ $secondary: #a7d6f6;
     }
 }
 
-.menuUsuario {
-    position: absolute;
-    top: 100%;
-    /* Coloca el menú justo debajo del ícono del usuario */
-    right: 0;
-    background-color: $blanco;
-    /* Color de fondo del menú del usuario */
-    border-radius: 15px;
-    width: 200px;
-    box-sizing: border-box;
-    /* Corrige la propiedad box-sizing */
-    visibility: hidden;
-    opacity: 0;
-    transition: visibility 0s, opacity 0.5s linear;
-    /* Transición para la visibilidad y opacidad */
-    align-items: center;
 
-    ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-
-        li {
-            padding: 10px;
-            display: flex;
-            align-items: center;
-
-            a {
-                text-decoration: none;
-                color: $azul;
-                background-color: transparent;
-                font-weight: 500;
-                transition: color 0.3s;
-                /* Transición para el cambio de color */
-
-                &:hover {
-                    color: $verde;
-                    /* Cambio de color al pasar el mouse */
-                }
-            }
-
-            .btn-cerrar {
-                text-decoration: none;
-                color: $azul;
-                margin-right:0.5rem ;
-                background-color: transparent;
-                font-weight: 500;
-                transition: color 0.3s;
-                /* Transición para el cambio de color */
-
-                &:hover {
-                    color: $verde;
-                    /* Cambio de color al pasar el mouse */
-                }
-            }
-        }
-    }
-}
-
-.menuUsuario.active {
-    visibility: visible;
-    opacity: 1;
-}
 </style>
 
 <script>
-
+import viewProfileService from "@/services/userService/viewProfileService.js";
 import logoutService from "@/services/authenticationService/logoutService.js";
 export default {
 
@@ -352,27 +356,66 @@ export default {
             },
         };
     },
-    mounted() {
+   mounted(){
+    this.getUserRole(); // Llama a la función para obtener el rol del usuario
+   },
+    created() {
+        
+        
+        // Create a Date object from the Unix timestamp
 
-        this.getUserRole(); // Llama a la función para obtener el rol del usuario
-
-    },
+        // Get the user ID from the JWT token in sessionStorage
+        const token = window.sessionStorage.getItem('JWTtoken');
+        if (this.token) {
+            this.getUserRole(); // Llama a la función para obtener el rol del usuario
+                const tokenData = JSON.parse(atob(token.split('.')[1]));
+      
+                const id = tokenData.ID;
+                viewProfileService.viewProfile(id)
+            .then(response => {
+                this.profile = response.data;
+                if (response.status == 200) {
+                    this.showSpinner = false;
+                    console.log("User Profile", response.data);
+                    // You can redirect the user or perform other actions here.
+                }
+            })
+            .catch(error => {
+                this.showSpinner = false;
+                // Handle login errors here
+                if (error.response.status == 403) {
+                    console.log("User not found sorry:", error.response.status, error);
+                    this.errorMessage = error.response.data.message || "User not found sorry";
+                    this.showErrorMessage = true;
+                }
+                else {
+                    // You can redirect the user or perform other actions here.
+                    console.error("Something happened:", error);
+                    this.errorMessage = error.response.data.message || "Something happened";
+                    this.showErrorMessage = true;
+                }
+                // Display an error message to the user or take appropriate action.
+                console.error('Error fetching user data:', error);
+                this.errorMessage = error.response.data.message || "Error en el fetching, por favor cierre sesión y vuelva a iniciarla";
+                this.showErrorMessage = true;
+            });
+        }
+      
+        
+        },
 
     methods: {
         handleUserIconClick() {
             const token = window.sessionStorage.getItem("JWTtoken");
-            if (token && token != null) {
+            if (token && token !== null) {
                 this.isMenuUsuarioActive = !this.isMenuUsuarioActive;
                 this.getUserRole(); // Llama a la función para obtener el rol del usuario
             } else {
-               
                 this.redirectToLogin();
             }
         },
         redirectToLogin() {
             this.$router.push("/Login"); // Redirige a la página de inicio de sesión
-            
-    
         },
         getUserRole() {
             const token = window.sessionStorage.getItem("JWTtoken");
