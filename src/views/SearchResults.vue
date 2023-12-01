@@ -510,11 +510,11 @@ export default {
   },
   mounted() {
    
-    const parametros = sessionStorage.getItem('searchResults')
+    const parametros = sessionStorage.getItem('search')
  
 
     if (parametros) {
-
+      sessionStorage.removeItem('search');
       this.flights = JSON.parse(parametros);
       this.searchParams.origin = this.flights.origin ;
       this.searchParams.destination = this.flights.destination;

@@ -558,7 +558,7 @@ export default {
                 .then((response) => {
                     if (response.status === 200) {
                         // Almacena los parámetros de búsqueda en el almacenamiento de sesión
-                        sessionStorage.setItem("searchResults", JSON.stringify(searchParams1));
+                        sessionStorage.setItem("search", JSON.stringify(searchParams1));
                       
                         // Redirige a la vista de resultados de búsqueda
                         this.$router.push({ name: "SearchResults" });
